@@ -27,47 +27,19 @@ func NewBowling() *Bowling {
 
 func (b *Bowling) ApplyThrownEvent(hit uint32) {
 	currentFrameIndex := b.FrameNumber - 1
-	if len(b.Games) == int(b.FrameNumber) {
-		b.Games[currentFrameIndex] = b.Games[currentFrameIndex].Hit(hit)
-	} else {
-		newGame := NewGame()
-		if b.FrameNumber > FrameWithExtraBonus {
-			newGame = NewGameWithoutExtraBonus()
-		}
-		b.Games = append(b.Games, newGame.Hit(hit))
+	if b.isNewGame() {
+		b.Games = append(b.Games, b.createNewGame())
 	}
+	b.Games[currentFrameIndex] = b.Games[currentFrameIndex].Hit(hit)
 
-	for i := 1; i <= 2; i++ {
-		bonusFrameIndex := int(currentFrameIndex) - i
-		if bonusFrameIndex >= 0 {
-			b.Games[bonusFrameIndex] = b.Games[bonusFrameIndex].Bonus(hit)
-		}
-	}
+	b.calculateBonus(hit)
 	b.calculateScore()
+	b.increaseExtraFrame()
 	b.Status = Thrown
 
 	if b.Games[currentFrameIndex].NoMoreHit() || b.FrameNumber > 10 {
 		b.ApplyReloadEvent()
 	}
-}
-
-func (b *Bowling) calculateScore() {
-	switch b.Games[b.FrameNumber-1].Status {
-	case Spare:
-		if b.FrameNumber == standardFrameNumber {
-			b.ExtraFrame += 1
-		}
-	case Strike:
-		if b.FrameNumber == standardFrameNumber {
-			b.ExtraFrame += 2
-		}
-	}
-
-	var score uint32
-	for _, g := range b.Games {
-		score = score + g.Score
-	}
-	b.Score = score
 }
 
 func (b *Bowling) ApplyReloadEvent() {
@@ -76,4 +48,49 @@ func (b *Bowling) ApplyReloadEvent() {
 		return
 	}
 	b.FrameNumber++
+}
+
+func (b *Bowling) isNewGame() bool {
+	return len(b.Games) != int(b.FrameNumber)
+}
+
+func (b *Bowling) createNewGame() Game {
+	if b.FrameNumber > FrameWithExtraBonus {
+		return NewGameWithoutExtraBonus()
+	}
+	return NewGame()
+}
+
+func (b *Bowling) calculateScore() {
+	var score uint32
+	for _, g := range b.Games {
+		score = score + g.Score
+	}
+	b.Score = score
+}
+
+func (b *Bowling) calculateBonus(hit uint32) {
+	currentFrameIndex := b.FrameNumber - 1
+	for i := 1; i <= 2; i++ {
+		bonusFrameIndex := int(currentFrameIndex) - i
+		if bonusFrameIndex >= 0 {
+			b.Games[bonusFrameIndex] = b.Games[bonusFrameIndex].Bonus(hit)
+		}
+	}
+}
+
+func (b *Bowling) increaseExtraFrame() {
+	if b.FrameNumber < standardFrameNumber {
+		return
+	}
+	if b.hasExtraFrame() {
+		b.ExtraFrame += 1
+	}
+}
+
+func (b *Bowling) hasExtraFrame() bool {
+	currentFrameIndex := b.FrameNumber - 1
+	noOpen := b.FrameNumber == standardFrameNumber && b.Games[currentFrameIndex].Status != Open
+	strikeTwice := b.FrameNumber == standardFrameNumber+1 && b.Games[currentFrameIndex].Status == Strike
+	return noOpen || strikeTwice
 }
