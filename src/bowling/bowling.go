@@ -15,9 +15,9 @@ type Bowling struct {
 	Games       []Game
 }
 
-func NewBowling() *Bowling {
+func NewBowling(id string) *Bowling {
 	b := &Bowling{
-		ID:          "0",
+		ID:          id,
 		FrameNumber: 1,
 		Status:      GamePrepared,
 		Games:       make([]Game, 0, standardFrameNumber+maxExtraFrameNumber),
@@ -25,7 +25,7 @@ func NewBowling() *Bowling {
 	return b
 }
 
-func (b *Bowling) ApplyThrownEvent(hit uint32) {
+func (b *Bowling) Throw(hit uint32) {
 	currentFrameIndex := b.FrameNumber - 1
 	if b.isNewGame() {
 		b.Games = append(b.Games, b.createNewGame())
@@ -38,11 +38,11 @@ func (b *Bowling) ApplyThrownEvent(hit uint32) {
 	b.Status = Thrown
 
 	if b.Games[currentFrameIndex].NoMoreHit() || b.FrameNumber > 10 {
-		b.ApplyReloadEvent()
+		b.reload()
 	}
 }
 
-func (b *Bowling) ApplyReloadEvent() {
+func (b *Bowling) reload() {
 	if b.FrameNumber-b.ExtraFrame >= 10 {
 		b.Status = FrameFinished
 		return

@@ -18,7 +18,7 @@ func TestBowlingSuite(t *testing.T) {
 func (s *BowlingSuite) TestThrowOneBall() {
 	b := getPreparedBowlingGame()
 
-	b.ApplyThrownEvent(1)
+	b.Throw(1)
 
 	s.Equal(uint32(1), b.Score)
 	s.Equal(bowling.Thrown, b.Status)
@@ -29,8 +29,8 @@ func (s *BowlingSuite) TestThrowOneBall() {
 func (s *BowlingSuite) TestThrowOpenGame() {
 	b := getPreparedBowlingGame()
 
-	b.ApplyThrownEvent(1)
-	b.ApplyThrownEvent(1)
+	b.Throw(1)
+	b.Throw(1)
 
 	s.Equal(uint32(2), b.Score)
 	s.Equal(bowling.Thrown, b.Status)
@@ -41,8 +41,8 @@ func (s *BowlingSuite) TestThrowOpenGame() {
 func (s *BowlingSuite) TestThrowSpareGame() {
 	b := getPreparedBowlingGame()
 
-	b.ApplyThrownEvent(1)
-	b.ApplyThrownEvent(9)
+	b.Throw(1)
+	b.Throw(9)
 
 	s.Equal(uint32(10), b.Score)
 	s.Equal(bowling.Thrown, b.Status)
@@ -53,7 +53,7 @@ func (s *BowlingSuite) TestThrowSpareGame() {
 func (s *BowlingSuite) TestThrowStrikeGame() {
 	b := getPreparedBowlingGame()
 
-	b.ApplyThrownEvent(10)
+	b.Throw(10)
 
 	s.Equal(uint32(10), b.Score)
 	s.Equal(bowling.Thrown, b.Status)
@@ -65,7 +65,7 @@ func (s *BowlingSuite) TestFinishedWithTenOpenGame() {
 	b := getPreparedBowlingGame()
 
 	for _, hit := range getOneHitArray() {
-		b.ApplyThrownEvent(hit)
+		b.Throw(hit)
 	}
 
 	s.Equal(uint32(20), b.Score)
@@ -78,7 +78,7 @@ func (s *BowlingSuite) TestFinishedWithSpareGame() {
 	b := getPreparedBowlingGame()
 
 	for _, hit := range getSpareArray() {
-		b.ApplyThrownEvent(hit)
+		b.Throw(hit)
 	}
 
 	s.Equal(uint32(110), b.Score)
@@ -91,7 +91,7 @@ func (s *BowlingSuite) TestFinishedWithPerfectGame() {
 	b := getPreparedBowlingGame()
 
 	for _, hit := range getStrikeArray() {
-		b.ApplyThrownEvent(hit)
+		b.Throw(hit)
 	}
 
 	s.Equal(uint32(300), b.Score)
@@ -101,7 +101,7 @@ func (s *BowlingSuite) TestFinishedWithPerfectGame() {
 }
 
 func getPreparedBowlingGame() *bowling.Bowling {
-	return bowling.NewBowling()
+	return bowling.NewBowling("0")
 }
 
 func getOneHitArray() []uint32 {
