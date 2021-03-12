@@ -56,9 +56,9 @@ func (b *Bowling) isNewGame() bool {
 
 func (b *Bowling) createNewGame() Game {
 	if b.FrameNumber > FrameWithExtraBonus {
-		return NewGameWithoutExtraBonus()
+		return NewGameWithoutExtraBonus(b.FrameNumber)
 	}
-	return NewGame()
+	return NewGame(b.FrameNumber)
 }
 
 func (b *Bowling) calculateScore() {

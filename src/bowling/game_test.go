@@ -16,7 +16,7 @@ func TestGameSuite(t *testing.T) {
 }
 
 func (s *GameSuite) TestSpareHit() {
-	g := bowling.NewGame()
+	g := bowling.NewGame(0)
 
 	got := g.Hit(1).Hit(9)
 
@@ -28,7 +28,7 @@ func (s *GameSuite) TestSpareHit() {
 }
 
 func (s *GameSuite) TestStrikeHit() {
-	g := bowling.NewGame()
+	g := bowling.NewGame(0)
 
 	got := g.Hit(10)
 
@@ -40,7 +40,7 @@ func (s *GameSuite) TestStrikeHit() {
 }
 
 func (s *GameSuite) TestOpenGame() {
-	g := bowling.NewGame()
+	g := bowling.NewGame(0)
 
 	got := g.Hit(1).Hit(1)
 
@@ -52,7 +52,7 @@ func (s *GameSuite) TestOpenGame() {
 }
 
 func (s *GameSuite) TestSpareAndBonus() {
-	g := bowling.NewGame()
+	g := bowling.NewGame(0)
 
 	got := g.Hit(1).Hit(9).Bonus(1)
 
@@ -64,7 +64,7 @@ func (s *GameSuite) TestSpareAndBonus() {
 }
 
 func (s *GameSuite) TestStrikeAndBonus() {
-	g := bowling.NewGame()
+	g := bowling.NewGame(0)
 
 	got := g.Hit(10).Bonus(1).Bonus(1)
 
@@ -76,7 +76,7 @@ func (s *GameSuite) TestStrikeAndBonus() {
 }
 
 func (s *GameSuite) TestGameWithoutExtraBonus() {
-	g := bowling.NewGameWithoutExtraBonus()
+	g := bowling.NewGameWithoutExtraBonus(0)
 
 	got := g.Hit(10)
 
@@ -95,7 +95,7 @@ func (s *GameSuite) TestNoMoreHit() {
 }
 
 func (s *GameSuite) TestHitAfterNoMoreHit() {
-	g := bowling.NewGame()
+	g := bowling.NewGame(0)
 
 	got := g.Hit(10).Hit(1)
 

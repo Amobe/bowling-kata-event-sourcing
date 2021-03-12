@@ -11,6 +11,7 @@ const (
 const standardPins = 10
 
 type Game struct {
+	ID                uint32
 	ThrowNumber       uint32
 	Score             uint32
 	Left              uint32
@@ -19,14 +20,15 @@ type Game struct {
 	ExtraBonus        uint32
 }
 
-func NewGame() Game {
+func NewGame(id uint32) Game {
 	return Game{
+		ID:   id,
 		Left: standardPins,
 	}
 }
 
-func NewGameWithoutExtraBonus() Game {
-	g := NewGame()
+func NewGameWithoutExtraBonus(id uint32) Game {
+	g := NewGame(id)
 	g.WithoutExtraBonus = true
 	return g
 }
