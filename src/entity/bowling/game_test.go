@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/amobe/bowling-kata-event-sourcing/src/entity/bowling"
+	"github.com/amobe/bowling-kata-event-sourcing/src/valueobject"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -23,7 +24,7 @@ func (s *GameSuite) TestSpareHit() {
 	s.Equal(uint32(1), got.ExtraBonus)
 	s.Equal(uint32(0), got.Left)
 	s.Equal(uint32(10), got.Score)
-	s.Equal(bowling.Spare, got.Status)
+	s.Equal(valueobject.Spare, got.Status)
 	s.Equal(uint32(2), got.ThrowNumber)
 }
 
@@ -35,7 +36,7 @@ func (s *GameSuite) TestStrikeHit() {
 	s.Equal(uint32(2), got.ExtraBonus)
 	s.Equal(uint32(0), got.Left)
 	s.Equal(uint32(10), got.Score)
-	s.Equal(bowling.Strike, got.Status)
+	s.Equal(valueobject.Strike, got.Status)
 	s.Equal(uint32(1), got.ThrowNumber)
 }
 
@@ -47,7 +48,7 @@ func (s *GameSuite) TestOpenGame() {
 	s.Equal(uint32(0), got.ExtraBonus)
 	s.Equal(uint32(8), got.Left)
 	s.Equal(uint32(2), got.Score)
-	s.Equal(bowling.Open, got.Status)
+	s.Equal(valueobject.Open, got.Status)
 	s.Equal(uint32(2), got.ThrowNumber)
 }
 
@@ -59,7 +60,7 @@ func (s *GameSuite) TestSpareAndBonus() {
 	s.Equal(uint32(0), got.ExtraBonus)
 	s.Equal(uint32(0), got.Left)
 	s.Equal(uint32(11), got.Score)
-	s.Equal(bowling.Spare, got.Status)
+	s.Equal(valueobject.Spare, got.Status)
 	s.Equal(uint32(2), got.ThrowNumber)
 }
 
@@ -71,7 +72,7 @@ func (s *GameSuite) TestStrikeAndBonus() {
 	s.Equal(uint32(0), got.ExtraBonus)
 	s.Equal(uint32(0), got.Left)
 	s.Equal(uint32(12), got.Score)
-	s.Equal(bowling.Strike, got.Status)
+	s.Equal(valueobject.Strike, got.Status)
 	s.Equal(uint32(1), got.ThrowNumber)
 }
 
@@ -83,14 +84,14 @@ func (s *GameSuite) TestGameWithoutExtraBonus() {
 	s.Equal(uint32(0), got.ExtraBonus)
 	s.Equal(uint32(0), got.Left)
 	s.Equal(uint32(10), got.Score)
-	s.Equal(bowling.Strike, got.Status)
+	s.Equal(valueobject.Strike, got.Status)
 	s.Equal(uint32(1), got.ThrowNumber)
 }
 
 func (s *GameSuite) TestNoMoreHit() {
 	twoHitGame := bowling.Game{ThrowNumber: 2}
 	s.True(twoHitGame.NoMoreHit())
-	strikeGame := bowling.Game{Status: bowling.Strike}
+	strikeGame := bowling.Game{Status: valueobject.Strike}
 	s.True(strikeGame.NoMoreHit())
 }
 
@@ -102,6 +103,6 @@ func (s *GameSuite) TestHitAfterNoMoreHit() {
 	s.Equal(uint32(2), got.ExtraBonus)
 	s.Equal(uint32(0), got.Left)
 	s.Equal(uint32(10), got.Score)
-	s.Equal(bowling.Strike, got.Status)
+	s.Equal(valueobject.Strike, got.Status)
 	s.Equal(uint32(1), got.ThrowNumber)
 }

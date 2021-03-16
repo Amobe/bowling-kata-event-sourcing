@@ -1,12 +1,6 @@
 package bowling
 
-type GameStatus string
-
-const (
-	Strike GameStatus = "Strike"
-	Spare  GameStatus = "Spare"
-	Open   GameStatus = "Open"
-)
+import "github.com/amobe/bowling-kata-event-sourcing/src/valueobject"
 
 const standardPins = 10
 
@@ -15,7 +9,7 @@ type Game struct {
 	ThrowNumber       uint32
 	Score             uint32
 	Left              uint32
-	Status            GameStatus
+	Status            valueobject.BowlingGameStatus
 	WithoutExtraBonus bool
 	ExtraBonus        uint32
 }
@@ -56,16 +50,16 @@ func (g Game) Bonus(pins uint32) Game {
 }
 
 func (g Game) NoMoreHit() bool {
-	return g.ThrowNumber == 2 || g.Status == Strike
+	return g.ThrowNumber == 2 || g.Status == valueobject.Strike
 }
 
-func (g Game) getStatusBonus() (s GameStatus, extraBonus uint32) {
+func (g Game) getStatusBonus() (s valueobject.BowlingGameStatus, extraBonus uint32) {
 	if g.isSpare() {
-		return Spare, g.gainExtraBonus(1)
+		return valueobject.Spare, g.gainExtraBonus(1)
 	} else if g.isStrike() {
-		return Strike, g.gainExtraBonus(2)
+		return valueobject.Strike, g.gainExtraBonus(2)
 	}
-	return Open, 0
+	return valueobject.Open, 0
 }
 
 func (g Game) gainExtraBonus(extraBonus uint32) uint32 {

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/amobe/bowling-kata-event-sourcing/src/entity/bowling"
+	"github.com/amobe/bowling-kata-event-sourcing/src/valueobject"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -21,9 +22,8 @@ func (s *BowlingSuite) TestThrowOneBall() {
 	b.Throw(1)
 
 	s.Equal(uint32(1), b.Score)
-	s.Equal(bowling.Thrown, b.Status)
+	s.Equal(valueobject.Thrown, b.Status)
 	s.Equal(uint32(1), b.FrameNumber)
-	s.Equal(uint32(0), b.ExtraFrame)
 }
 
 func (s *BowlingSuite) TestThrowOpenGame() {
@@ -33,9 +33,8 @@ func (s *BowlingSuite) TestThrowOpenGame() {
 	b.Throw(1)
 
 	s.Equal(uint32(2), b.Score)
-	s.Equal(bowling.Thrown, b.Status)
+	s.Equal(valueobject.Thrown, b.Status)
 	s.Equal(uint32(2), b.FrameNumber)
-	s.Equal(uint32(0), b.ExtraFrame)
 }
 
 func (s *BowlingSuite) TestThrowSpareGame() {
@@ -45,9 +44,8 @@ func (s *BowlingSuite) TestThrowSpareGame() {
 	b.Throw(9)
 
 	s.Equal(uint32(10), b.Score)
-	s.Equal(bowling.Thrown, b.Status)
+	s.Equal(valueobject.Thrown, b.Status)
 	s.Equal(uint32(2), b.FrameNumber)
-	s.Equal(uint32(0), b.ExtraFrame)
 }
 
 func (s *BowlingSuite) TestThrowStrikeGame() {
@@ -56,9 +54,8 @@ func (s *BowlingSuite) TestThrowStrikeGame() {
 	b.Throw(10)
 
 	s.Equal(uint32(10), b.Score)
-	s.Equal(bowling.Thrown, b.Status)
+	s.Equal(valueobject.Thrown, b.Status)
 	s.Equal(uint32(2), b.FrameNumber)
-	s.Equal(uint32(0), b.ExtraFrame)
 }
 
 func (s *BowlingSuite) TestFinishedWithTenOpenGame() {
@@ -69,9 +66,8 @@ func (s *BowlingSuite) TestFinishedWithTenOpenGame() {
 	}
 
 	s.Equal(uint32(20), b.Score)
-	s.Equal(bowling.FrameFinished, b.Status)
+	s.Equal(valueobject.FrameFinished, b.Status)
 	s.Equal(uint32(10), b.FrameNumber)
-	s.Equal(uint32(0), b.ExtraFrame)
 }
 
 func (s *BowlingSuite) TestFinishedWithSpareGame() {
@@ -82,9 +78,8 @@ func (s *BowlingSuite) TestFinishedWithSpareGame() {
 	}
 
 	s.Equal(uint32(110), b.Score)
-	s.Equal(bowling.FrameFinished, b.Status)
+	s.Equal(valueobject.FrameFinished, b.Status)
 	s.Equal(uint32(11), b.FrameNumber)
-	s.Equal(uint32(1), b.ExtraFrame)
 }
 
 func (s *BowlingSuite) TestFinishedWithPerfectGame() {
@@ -95,9 +90,8 @@ func (s *BowlingSuite) TestFinishedWithPerfectGame() {
 	}
 
 	s.Equal(uint32(300), b.Score)
-	s.Equal(bowling.FrameFinished, b.Status)
+	s.Equal(valueobject.FrameFinished, b.Status)
 	s.Equal(uint32(12), b.FrameNumber)
-	s.Equal(uint32(2), b.ExtraFrame)
 }
 
 func getPreparedBowlingGame() *bowling.Bowling {
