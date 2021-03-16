@@ -5,7 +5,8 @@ import (
 )
 
 type GameHitEvent struct {
-	ID          uint32
+	baseEvent
+	ID          uint32 `json:"id"`
 	ThrowNumber uint32
 	Score       uint32
 	Left        uint32
@@ -14,18 +15,20 @@ type GameHitEvent struct {
 }
 
 type GameBonusedEvent struct {
+	baseEvent
 	ID         uint32
 	Score      uint32
 	ExtraBonus uint32
 }
 
 type ThrownEvent struct {
+	baseEvent
 	Status valueobject.BowlingStatus
 	Score  uint32
-	// ExtraFrame uint32
 }
 
 type ReloadedEvent struct {
+	baseEvent
 	Status      valueobject.BowlingStatus
 	FrameNumber uint32
 }
