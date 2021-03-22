@@ -16,7 +16,7 @@ type Bowling struct {
 	FrameNumber uint32
 	Status      valueobject.BowlingStatus
 	Score       uint32
-	Games       map[uint32]Game
+	Games       map[uint32]valueobject.BowlingGame
 
 	changes []event.Event
 	version int
@@ -27,7 +27,7 @@ func NewBowling(id string) *Bowling {
 		ID:          id,
 		FrameNumber: 1,
 		Status:      valueobject.GamePrepared,
-		Games:       make(map[uint32]Game, standardFrameNumber+maxExtraFrameNumber),
+		Games:       make(map[uint32]valueobject.BowlingGame, standardFrameNumber+maxExtraFrameNumber),
 	}
 	return b
 }
@@ -51,7 +51,7 @@ func (b *Bowling) Throw(hit uint32) {
 		Score:  b.calculateScore(b.Games),
 	})
 
-	if b.Games[b.FrameNumber].NoMoreHit() || b.FrameNumber > 10 {
+	if b.NoMoreHit(b.Games[b.FrameNumber]) || b.FrameNumber > 10 {
 		b.Reload()
 	}
 }
@@ -72,10 +72,10 @@ func (b *Bowling) Reload() {
 	b.raise(ev)
 }
 
-func (b *Bowling) calculateGameHit(hit uint32, game Game) {
-	hitGame := game.Hit(hit)
+func (b *Bowling) calculateGameHit(hit uint32, game valueobject.BowlingGame) {
+	hitGame := b.Hit(game, hit)
 	b.raise(&event.GameHitEvent{
-		ID:          hitGame.ID,
+		ID:          hitGame.FrameNumber,
 		ThrowNumber: hitGame.ThrowNumber,
 		Score:       hitGame.Score,
 		Left:        hitGame.Left,
@@ -84,30 +84,30 @@ func (b *Bowling) calculateGameHit(hit uint32, game Game) {
 	})
 }
 
-func (b *Bowling) calculateGameBonus(hit uint32, game Game) {
-	bonusedGame := game.Bonus(hit)
+func (b *Bowling) calculateGameBonus(hit uint32, game valueobject.BowlingGame) {
+	bonusedGame := b.Bonus(game, hit)
 	b.raise(&event.GameBonusedEvent{
-		ID:         bonusedGame.ID,
+		ID:         bonusedGame.FrameNumber,
 		Score:      bonusedGame.Score,
 		ExtraBonus: bonusedGame.ExtraBonus,
 	})
 }
 
-func (b *Bowling) createNewGame(frameNumber uint32) Game {
+func (b *Bowling) createNewGame(frameNumber uint32) valueobject.BowlingGame {
 	if frameNumber > FrameWithExtraBonus {
-		return NewGameWithoutExtraBonus(frameNumber)
+		return b.NewBowlingGameWithoutExtraBonus(frameNumber)
 	}
-	return NewGame(frameNumber)
+	return b.NewBowlingGame(frameNumber)
 }
 
-func (b *Bowling) calculateScore(games map[uint32]Game) (score uint32) {
+func (b *Bowling) calculateScore(games map[uint32]valueobject.BowlingGame) (score uint32) {
 	for _, g := range games {
 		score = score + g.Score
 	}
 	return
 }
 
-func (b *Bowling) hasNoExtraFrame(frameNumber uint32, game Game) bool {
+func (b *Bowling) hasNoExtraFrame(frameNumber uint32, game valueobject.BowlingGame) bool {
 	openEnd := b.FrameNumber >= standardFrameNumber && b.Games[b.FrameNumber].Status == valueobject.Open
 	strikeTwice := b.FrameNumber == standardFrameNumber+maxExtraFrameNumber && b.Games[b.FrameNumber].Status == valueobject.Strike
 	return openEnd || strikeTwice
@@ -146,7 +146,7 @@ func (b *Bowling) ApplyThrownEvent(ev *event.ThrownEvent) {
 
 func (b *Bowling) ApplyGameHitEvent(ev *event.GameHitEvent) {
 	g := b.createNewGame(ev.ID)
-	g.ID = ev.ID
+	g.FrameNumber = ev.ID
 	g.ThrowNumber = ev.ThrowNumber
 	g.Score = ev.Score
 	g.Left = ev.Left

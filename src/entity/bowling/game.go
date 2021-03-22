@@ -4,75 +4,67 @@ import "github.com/amobe/bowling-kata-event-sourcing/src/valueobject"
 
 const standardPins = 10
 
-type Game struct {
-	ID                uint32
-	ThrowNumber       uint32
-	Score             uint32
-	Left              uint32
-	Status            valueobject.BowlingGameStatus
-	WithoutExtraBonus bool
-	ExtraBonus        uint32
-}
-
-func NewGame(id uint32) Game {
-	return Game{
-		ID:   id,
-		Left: standardPins,
+func (b *Bowling) NewBowlingGame(frameNubmer uint32) valueobject.BowlingGame {
+	return valueobject.BowlingGame{
+		FrameNumber: frameNubmer,
+		Left:        standardPins,
 	}
 }
 
-func NewGameWithoutExtraBonus(id uint32) Game {
-	g := NewGame(id)
-	g.WithoutExtraBonus = true
-	return g
-}
-
-func (g Game) Hit(pins uint32) Game {
-	if g.NoMoreHit() {
-		return g
+func (b *Bowling) NewBowlingGameWithoutExtraBonus(frameNubmer uint32) valueobject.BowlingGame {
+	return valueobject.BowlingGame{
+		FrameNumber:       frameNubmer,
+		Left:              standardPins,
+		WithoutExtraBonus: true,
 	}
-	g.ThrowNumber = g.ThrowNumber + 1
-	g.Left = g.Left - pins
-	g.Score = g.Score + pins
-	g.Status, g.ExtraBonus = g.getStatusBonus()
-	if g.WithoutExtraBonus {
-		g.ExtraBonus = 0
+}
+
+func (b *Bowling) Hit(game valueobject.BowlingGame, pins uint32) valueobject.BowlingGame {
+	if b.NoMoreHit(game) {
+		return game
 	}
-	return g
-}
-
-func (g Game) Bonus(pins uint32) Game {
-	if g.ExtraBonus > 0 {
-		g.Score = g.Score + pins
-		g.ExtraBonus = g.ExtraBonus - 1
+	game.ThrowNumber = game.ThrowNumber + 1
+	game.Left = game.Left - pins
+	game.Score = game.Score + pins
+	game.Status, game.ExtraBonus = b.getStatusBonus(game)
+	if game.WithoutExtraBonus {
+		game.ExtraBonus = 0
 	}
-	return g
+	return game
 }
 
-func (g Game) NoMoreHit() bool {
-	return g.ThrowNumber == 2 || g.Status == valueobject.Strike
-}
-
-func (g Game) getStatusBonus() (s valueobject.BowlingGameStatus, extraBonus uint32) {
-	if g.isSpare() {
-		return valueobject.Spare, g.gainExtraBonus(1)
-	} else if g.isStrike() {
-		return valueobject.Strike, g.gainExtraBonus(2)
+func (b *Bowling) Bonus(game valueobject.BowlingGame, pins uint32) valueobject.BowlingGame {
+	if game.ExtraBonus > 0 {
+		game.Score = game.Score + pins
+		game.ExtraBonus = game.ExtraBonus - 1
 	}
-	return valueobject.Open, 0
+	return game
 }
 
-func (g Game) gainExtraBonus(extraBonus uint32) uint32 {
-	if g.WithoutExtraBonus {
+func (b *Bowling) isStrike(game valueobject.BowlingGame) bool {
+	return game.ThrowNumber == 1 && game.Left == 0
+}
+
+func (b *Bowling) isSpare(game valueobject.BowlingGame) bool {
+	return game.ThrowNumber == 2 && game.Left == 0
+}
+
+func (b *Bowling) gainExtraBonus(game valueobject.BowlingGame, extraBonus uint32) uint32 {
+	if game.WithoutExtraBonus {
 		return 0
 	}
 	return extraBonus
 }
 
-func (g Game) isStrike() bool {
-	return g.ThrowNumber == 1 && g.Left == 0
+func (b *Bowling) NoMoreHit(game valueobject.BowlingGame) bool {
+	return game.ThrowNumber == 2 || game.Status == valueobject.Strike
 }
 
-func (g Game) isSpare() bool {
-	return g.ThrowNumber == 2 && g.Left == 0
+func (b *Bowling) getStatusBonus(game valueobject.BowlingGame) (s valueobject.BowlingGameStatus, extraBonus uint32) {
+	if b.isSpare(game) {
+		return valueobject.Spare, b.gainExtraBonus(game, 1)
+	} else if b.isStrike(game) {
+		return valueobject.Strike, b.gainExtraBonus(game, 2)
+	}
+	return valueobject.Open, 0
 }

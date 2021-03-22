@@ -17,9 +17,11 @@ func TestGameSuite(t *testing.T) {
 }
 
 func (s *GameSuite) TestSpareHit() {
-	g := bowling.NewGame(0)
+	b := bowling.NewBowling("0")
+	g := b.NewBowlingGame(0)
 
-	got := g.Hit(1).Hit(9)
+	firstGame := b.Hit(g, 1)
+	got := b.Hit(firstGame, 9)
 
 	s.Equal(uint32(1), got.ExtraBonus)
 	s.Equal(uint32(0), got.Left)
@@ -29,9 +31,10 @@ func (s *GameSuite) TestSpareHit() {
 }
 
 func (s *GameSuite) TestStrikeHit() {
-	g := bowling.NewGame(0)
+	b := bowling.NewBowling("0")
+	g := b.NewBowlingGame(0)
 
-	got := g.Hit(10)
+	got := b.Hit(g, 10)
 
 	s.Equal(uint32(2), got.ExtraBonus)
 	s.Equal(uint32(0), got.Left)
@@ -41,9 +44,11 @@ func (s *GameSuite) TestStrikeHit() {
 }
 
 func (s *GameSuite) TestOpenGame() {
-	g := bowling.NewGame(0)
+	b := bowling.NewBowling("0")
+	g := b.NewBowlingGame(0)
 
-	got := g.Hit(1).Hit(1)
+	firstGame := b.Hit(g, 1)
+	got := b.Hit(firstGame, 1)
 
 	s.Equal(uint32(0), got.ExtraBonus)
 	s.Equal(uint32(8), got.Left)
@@ -53,9 +58,12 @@ func (s *GameSuite) TestOpenGame() {
 }
 
 func (s *GameSuite) TestSpareAndBonus() {
-	g := bowling.NewGame(0)
+	b := bowling.NewBowling("0")
+	g := b.NewBowlingGame(0)
 
-	got := g.Hit(1).Hit(9).Bonus(1)
+	firstGame := b.Hit(g, 1)
+	secondGame := b.Hit(firstGame, 9)
+	got := b.Bonus(secondGame, 1)
 
 	s.Equal(uint32(0), got.ExtraBonus)
 	s.Equal(uint32(0), got.Left)
@@ -65,9 +73,12 @@ func (s *GameSuite) TestSpareAndBonus() {
 }
 
 func (s *GameSuite) TestStrikeAndBonus() {
-	g := bowling.NewGame(0)
+	b := bowling.NewBowling("0")
+	g := b.NewBowlingGame(0)
 
-	got := g.Hit(10).Bonus(1).Bonus(1)
+	firstGame := b.Hit(g, 10)
+	secondGame := b.Bonus(firstGame, 1)
+	got := b.Bonus(secondGame, 1)
 
 	s.Equal(uint32(0), got.ExtraBonus)
 	s.Equal(uint32(0), got.Left)
@@ -77,9 +88,10 @@ func (s *GameSuite) TestStrikeAndBonus() {
 }
 
 func (s *GameSuite) TestGameWithoutExtraBonus() {
-	g := bowling.NewGameWithoutExtraBonus(0)
+	b := bowling.NewBowling("0")
+	g := b.NewBowlingGameWithoutExtraBonus(0)
 
-	got := g.Hit(10)
+	got := b.Hit(g, 10)
 
 	s.Equal(uint32(0), got.ExtraBonus)
 	s.Equal(uint32(0), got.Left)
@@ -89,16 +101,19 @@ func (s *GameSuite) TestGameWithoutExtraBonus() {
 }
 
 func (s *GameSuite) TestNoMoreHit() {
-	twoHitGame := bowling.Game{ThrowNumber: 2}
-	s.True(twoHitGame.NoMoreHit())
-	strikeGame := bowling.Game{Status: valueobject.Strike}
-	s.True(strikeGame.NoMoreHit())
+	b := bowling.NewBowling("0")
+	twoHitGame := valueobject.BowlingGame{ThrowNumber: 2}
+	s.True(b.NoMoreHit(twoHitGame))
+	strikeGame := valueobject.BowlingGame{Status: valueobject.Strike}
+	s.True(b.NoMoreHit(strikeGame))
 }
 
 func (s *GameSuite) TestHitAfterNoMoreHit() {
-	g := bowling.NewGame(0)
+	b := bowling.NewBowling("0")
+	g := b.NewBowlingGame(0)
 
-	got := g.Hit(10).Hit(1)
+	firstGame := b.Hit(g, 10)
+	got := b.Hit(firstGame, 1)
 
 	s.Equal(uint32(2), got.ExtraBonus)
 	s.Equal(uint32(0), got.Left)

@@ -15,3 +15,13 @@ const (
 	Spare  BowlingGameStatus = "Spare"
 	Open   BowlingGameStatus = "Open"
 )
+
+type BowlingGame struct {
+	FrameNumber       uint32
+	ThrowNumber       uint32
+	Score             uint32
+	Left              uint32
+	Status            BowlingGameStatus
+	WithoutExtraBonus bool
+	ExtraBonus        uint32
+}
