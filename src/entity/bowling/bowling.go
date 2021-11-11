@@ -18,16 +18,17 @@ type Bowling struct {
 	Score       uint32
 	Games       map[uint32]valueobject.BowlingGame
 
-	changes []event.Event
+	repo    event.Repository
 	version int
 }
 
-func NewBowling(id string) *Bowling {
+func NewBowling(id string, storage event.Repository) *Bowling {
 	b := &Bowling{
 		ID:          id,
 		FrameNumber: 1,
 		Status:      valueobject.GamePrepared,
 		Games:       make(map[uint32]valueobject.BowlingGame, standardFrameNumber+maxExtraFrameNumber),
+		repo:        storage,
 	}
 	return b
 }
@@ -114,7 +115,7 @@ func (b *Bowling) hasNoExtraFrame(frameNumber uint32, game valueobject.BowlingGa
 }
 
 func (b *Bowling) raise(ev event.Event) {
-	b.changes = append(b.changes, ev)
+	_ = b.repo.Append(b.ID, ev)
 	b.On(ev, true)
 }
 

@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/amobe/bowling-kata-event-sourcing/src/entity/bowling"
+	"github.com/amobe/bowling-kata-event-sourcing/src/storage"
 	"github.com/amobe/bowling-kata-event-sourcing/src/valueobject"
 	"github.com/stretchr/testify/suite"
 )
@@ -17,7 +18,7 @@ func TestGameSuite(t *testing.T) {
 }
 
 func (s *GameSuite) TestSpareHit() {
-	b := bowling.NewBowling("0")
+	b := bowling.NewBowling("0", storage.NewInmemEventStorage())
 	g := b.NewBowlingGame(0)
 
 	firstGame := b.Hit(g, 1)
@@ -31,7 +32,7 @@ func (s *GameSuite) TestSpareHit() {
 }
 
 func (s *GameSuite) TestStrikeHit() {
-	b := bowling.NewBowling("0")
+	b := bowling.NewBowling("0", storage.NewInmemEventStorage())
 	g := b.NewBowlingGame(0)
 
 	got := b.Hit(g, 10)
@@ -44,7 +45,7 @@ func (s *GameSuite) TestStrikeHit() {
 }
 
 func (s *GameSuite) TestOpenGame() {
-	b := bowling.NewBowling("0")
+	b := bowling.NewBowling("0", storage.NewInmemEventStorage())
 	g := b.NewBowlingGame(0)
 
 	firstGame := b.Hit(g, 1)
@@ -58,7 +59,7 @@ func (s *GameSuite) TestOpenGame() {
 }
 
 func (s *GameSuite) TestSpareAndBonus() {
-	b := bowling.NewBowling("0")
+	b := bowling.NewBowling("0", storage.NewInmemEventStorage())
 	g := b.NewBowlingGame(0)
 
 	firstGame := b.Hit(g, 1)
@@ -73,7 +74,7 @@ func (s *GameSuite) TestSpareAndBonus() {
 }
 
 func (s *GameSuite) TestStrikeAndBonus() {
-	b := bowling.NewBowling("0")
+	b := bowling.NewBowling("0", storage.NewInmemEventStorage())
 	g := b.NewBowlingGame(0)
 
 	firstGame := b.Hit(g, 10)
@@ -88,7 +89,7 @@ func (s *GameSuite) TestStrikeAndBonus() {
 }
 
 func (s *GameSuite) TestGameWithoutExtraBonus() {
-	b := bowling.NewBowling("0")
+	b := bowling.NewBowling("0", storage.NewInmemEventStorage())
 	g := b.NewBowlingGameWithoutExtraBonus(0)
 
 	got := b.Hit(g, 10)
@@ -101,7 +102,7 @@ func (s *GameSuite) TestGameWithoutExtraBonus() {
 }
 
 func (s *GameSuite) TestNoMoreHit() {
-	b := bowling.NewBowling("0")
+	b := bowling.NewBowling("0", storage.NewInmemEventStorage())
 	twoHitGame := valueobject.BowlingGame{ThrowNumber: 2}
 	s.True(b.NoMoreHit(twoHitGame))
 	strikeGame := valueobject.BowlingGame{Status: valueobject.Strike}
@@ -109,7 +110,7 @@ func (s *GameSuite) TestNoMoreHit() {
 }
 
 func (s *GameSuite) TestHitAfterNoMoreHit() {
-	b := bowling.NewBowling("0")
+	b := bowling.NewBowling("0", storage.NewInmemEventStorage())
 	g := b.NewBowlingGame(0)
 
 	firstGame := b.Hit(g, 10)
