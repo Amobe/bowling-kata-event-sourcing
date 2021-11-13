@@ -4,14 +4,10 @@ import (
 	"github.com/amobe/bowling-kata-event-sourcing/src/valueobject"
 )
 
-type GameHitEvent struct {
+type GameReplacedEvent struct {
 	baseEvent
-	ID          uint32 `json:"id"`
-	ThrowNumber uint32
-	Score       uint32
-	Left        uint32
-	Status      valueobject.BowlingGameStatus
-	ExtraBonus  uint32
+	ID   uint32 `json:"id"`
+	Game valueobject.BowlingGame
 }
 
 type GameBonusedEvent struct {
