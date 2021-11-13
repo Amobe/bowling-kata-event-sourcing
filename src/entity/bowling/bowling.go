@@ -47,6 +47,9 @@ func (b *Bowling) Throw(hit uint32) {
 		b.calculateGameBonus(hit, b.Games[b.FrameNumber-2])
 	}
 
+	if b.Status == valueobject.FrameFinished {
+		return
+	}
 	b.raise(&event.ThrownEvent{
 		Status: valueobject.Thrown,
 		Score:  b.calculateScore(b.Games),
@@ -139,13 +142,8 @@ func (b *Bowling) On(changed event.Event, isNew bool) {
 }
 
 func (b *Bowling) ApplyThrownEvent(ev *event.ThrownEvent) {
-	switch b.Status {
-	case valueobject.FrameFinished:
-		return
-	default:
-		b.Status = ev.Status
-		b.Score = ev.Score
-	}
+	b.Status = ev.Status
+	b.Score = ev.Score
 }
 
 func (b *Bowling) ApplyGameReplacedEvent(ev *event.GameReplacedEvent) {
