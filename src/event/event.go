@@ -1,9 +1,13 @@
 package event
 
 type Event interface {
-	isEvent()
+	EventName() string
 }
 
-type baseEvent struct{}
+type baseEvent struct {
+	name string
+}
 
-func (baseEvent) isEvent() {}
+func (b baseEvent) EventName() string {
+	return b.name
+}

@@ -50,10 +50,7 @@ func (b *Bowling) Throw(hit uint32) {
 	if b.Status == valueobject.FrameFinished {
 		return
 	}
-	b.raise(&event.ThrownEvent{
-		Status: valueobject.Thrown,
-		Score:  b.calculateScore(b.Games),
-	})
+	b.raise(event.NewThrownEvent(valueobject.Thrown, b.calculateScore(b.Games)))
 
 	if b.NoMoreHit(b.Games[b.FrameNumber]) || b.FrameNumber > 10 {
 		b.Reload()
@@ -61,36 +58,24 @@ func (b *Bowling) Throw(hit uint32) {
 }
 
 func (b *Bowling) Reload() {
-	var ev *event.ReloadedEvent
-	if b.hasNoExtraFrame(b.FrameNumber, b.Games[b.FrameNumber]) {
-		ev = &event.ReloadedEvent{
-			Status:      valueobject.FrameFinished,
-			FrameNumber: b.FrameNumber,
-		}
-	} else {
-		ev = &event.ReloadedEvent{
-			Status:      b.Status,
-			FrameNumber: b.FrameNumber + 1,
-		}
+	status := valueobject.FrameFinished
+	frameNumber := b.FrameNumber
+	if b.hasExtraFrame(b.FrameNumber, b.Games[b.FrameNumber]) {
+		status = b.Status
+		frameNumber = b.FrameNumber + 1
 	}
-	b.raise(ev)
+	b.raise(event.NewReloadedEvent(status, frameNumber))
 }
 
 func (b *Bowling) calculateGameHit(hit uint32, game valueobject.BowlingGame) {
 	hitGame := b.Hit(game, hit)
-	b.raise(&event.GameReplacedEvent{
-		FrameNumber: hitGame.FrameNumber,
-		Game:        hitGame,
-	})
+	b.raise(event.NewGameReplacedEvent(hitGame.FrameNumber, hitGame))
 }
 
 func (b *Bowling) calculateGameBonus(hit uint32, game valueobject.BowlingGame) {
 	bonusedGame := b.Bonus(game, hit)
-	b.raise(&event.GameBonusedEvent{
-		FrameNumber: bonusedGame.FrameNumber,
-		Score:       bonusedGame.Score,
-		ExtraBonus:  bonusedGame.ExtraBonus,
-	})
+	b.raise(event.NewGameBonusedEvent(
+		bonusedGame.FrameNumber, bonusedGame.Score, bonusedGame.ExtraBonus))
 }
 
 func (b *Bowling) createNewGame(frameNumber uint32) valueobject.BowlingGame {
@@ -107,10 +92,10 @@ func (b *Bowling) calculateScore(games map[uint32]valueobject.BowlingGame) (scor
 	return
 }
 
-func (b *Bowling) hasNoExtraFrame(frameNumber uint32, game valueobject.BowlingGame) bool {
+func (b *Bowling) hasExtraFrame(frameNumber uint32, game valueobject.BowlingGame) bool {
 	openEnd := b.FrameNumber >= standardFrameNumber && b.Games[b.FrameNumber].Status == valueobject.Open
 	strikeTwice := b.FrameNumber == standardFrameNumber+maxExtraFrameNumber && b.Games[b.FrameNumber].Status == valueobject.Strike
-	return openEnd || strikeTwice
+	return !(openEnd || strikeTwice)
 }
 
 func (b *Bowling) raise(ev event.Event) {
