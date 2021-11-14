@@ -78,25 +78,18 @@ func (b *Bowling) Reload() {
 
 func (b *Bowling) calculateGameHit(hit uint32, game valueobject.BowlingGame) {
 	hitGame := b.Hit(game, hit)
-	g := b.createNewGame(hitGame.FrameNumber)
-	g.FrameNumber = hitGame.FrameNumber
-	g.ThrowNumber = hitGame.ThrowNumber
-	g.Score = hitGame.Score
-	g.Left = hitGame.Left
-	g.Status = hitGame.Status
-	g.ExtraBonus = hitGame.ExtraBonus
 	b.raise(&event.GameReplacedEvent{
-		ID:   hitGame.FrameNumber,
-		Game: g,
+		FrameNumber: hitGame.FrameNumber,
+		Game:        hitGame,
 	})
 }
 
 func (b *Bowling) calculateGameBonus(hit uint32, game valueobject.BowlingGame) {
 	bonusedGame := b.Bonus(game, hit)
 	b.raise(&event.GameBonusedEvent{
-		ID:         bonusedGame.FrameNumber,
-		Score:      bonusedGame.Score,
-		ExtraBonus: bonusedGame.ExtraBonus,
+		FrameNumber: bonusedGame.FrameNumber,
+		Score:       bonusedGame.Score,
+		ExtraBonus:  bonusedGame.ExtraBonus,
 	})
 }
 
@@ -147,14 +140,14 @@ func (b *Bowling) ApplyThrownEvent(ev *event.ThrownEvent) {
 }
 
 func (b *Bowling) ApplyGameReplacedEvent(ev *event.GameReplacedEvent) {
-	b.Games[ev.ID] = ev.Game
+	b.Games[ev.FrameNumber] = ev.Game
 }
 
 func (b *Bowling) ApplyGameBonusedEvent(ev *event.GameBonusedEvent) {
-	g := b.Games[ev.ID]
+	g := b.Games[ev.FrameNumber]
 	g.Score = ev.Score
 	g.ExtraBonus = ev.ExtraBonus
-	b.Games[ev.ID] = g
+	b.Games[ev.FrameNumber] = g
 }
 
 func (b *Bowling) ApplyReloadedEvent(ev *event.ReloadedEvent) {

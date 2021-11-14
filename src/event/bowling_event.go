@@ -6,15 +6,15 @@ import (
 
 type GameReplacedEvent struct {
 	baseEvent
-	ID   uint32 `json:"id"`
-	Game valueobject.BowlingGame
+	FrameNumber uint32
+	Game        valueobject.BowlingGame
 }
 
 type GameBonusedEvent struct {
 	baseEvent
-	ID         uint32
-	Score      uint32
-	ExtraBonus uint32
+	FrameNumber uint32
+	Score       uint32
+	ExtraBonus  uint32
 }
 
 type ThrownEvent struct {
