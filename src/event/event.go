@@ -1,13 +1,25 @@
 package event
 
 type Event interface {
-	EventName() string
+	ID() string
+	Name() string
+	Data() interface{}
 }
 
-type baseEvent struct {
+type event struct {
+	id   string
 	name string
+	data interface{}
 }
 
-func (b baseEvent) EventName() string {
-	return b.name
+func (e event) ID() string {
+	return e.id
+}
+
+func (e event) Name() string {
+	return e.name
+}
+
+func (e event) Data() interface{} {
+	return e.data
 }

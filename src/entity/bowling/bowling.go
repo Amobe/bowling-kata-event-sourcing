@@ -104,7 +104,7 @@ func (b *Bowling) raise(ev event.Event) {
 }
 
 func (b *Bowling) On(changed event.Event, isNew bool) {
-	switch ev := changed.(type) {
+	switch ev := changed.Data().(type) {
 	case *event.ThrownEvent:
 		b.ApplyThrownEvent(ev)
 	case *event.GameReplacedEvent:
