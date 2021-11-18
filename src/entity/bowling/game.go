@@ -2,6 +2,7 @@ package bowling
 
 import "github.com/amobe/bowling-kata-event-sourcing/src/valueobject"
 
+const StandardPins = standardPins
 const standardPins = 10
 
 func (b *Bowling) NewBowlingGame(frameNubmer uint32) valueobject.BowlingGame {
@@ -57,7 +58,11 @@ func (b *Bowling) gainExtraBonus(game valueobject.BowlingGame, extraBonus uint32
 }
 
 func (b *Bowling) NoMoreHit(game valueobject.BowlingGame) bool {
-	return game.ThrowNumber == 2 || game.Status == valueobject.Strike
+	return NoMoreHit(game.ThrowNumber, game.Status)
+}
+
+func NoMoreHit(throwNumber uint32, status valueobject.BowlingGameStatus) bool {
+	return throwNumber == 2 || status == valueobject.Strike
 }
 
 func (b *Bowling) getStatusBonus(game valueobject.BowlingGame) (s valueobject.BowlingGameStatus, extraBonus uint32) {
