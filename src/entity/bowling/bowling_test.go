@@ -49,6 +49,17 @@ func (s *BowlingSuite) TestThrowSpareGame() {
 	s.Equal(uint32(2), b.FrameNumber)
 }
 
+func (s *BowlingSuite) TestThrowSpareGameWithBonus() {
+	b := getPreparedBowlingGame()
+
+	b.Throw(1)
+	b.Throw(9)
+	b.Throw(3)
+	b.Throw(3)
+
+	s.Equal(uint32(19), b.Score)
+}
+
 func (s *BowlingSuite) TestThrowStrikeGame() {
 	b := getPreparedBowlingGame()
 
@@ -57,6 +68,16 @@ func (s *BowlingSuite) TestThrowStrikeGame() {
 	s.Equal(uint32(10), b.Score)
 	s.Equal(valueobject.Thrown, b.Status)
 	s.Equal(uint32(2), b.FrameNumber)
+}
+
+func (s *BowlingSuite) TestThrowStrikeGameWithBonus() {
+	b := getPreparedBowlingGame()
+
+	b.Throw(10)
+	b.Throw(3)
+	b.Throw(3)
+
+	s.Equal(uint32(22), b.Score)
 }
 
 func (s *BowlingSuite) TestFinishedWithTenOpenGame() {

@@ -58,36 +58,6 @@ func (s *GameSuite) TestOpenGame() {
 	s.Equal(uint32(2), got.ThrowNumber)
 }
 
-func (s *GameSuite) TestSpareAndBonus() {
-	b := bowling.NewBowling("0", storage.NewInmemEventStorage())
-	g := b.NewBowlingGame(0)
-
-	firstGame := b.Hit(g, 1)
-	secondGame := b.Hit(firstGame, 9)
-	got := b.Bonus(secondGame, 1)
-
-	s.Equal(uint32(0), got.ExtraBonus)
-	s.Equal(uint32(0), got.Left)
-	s.Equal(uint32(11), got.Score)
-	s.Equal(valueobject.Spare, got.Status)
-	s.Equal(uint32(2), got.ThrowNumber)
-}
-
-func (s *GameSuite) TestStrikeAndBonus() {
-	b := bowling.NewBowling("0", storage.NewInmemEventStorage())
-	g := b.NewBowlingGame(0)
-
-	firstGame := b.Hit(g, 10)
-	secondGame := b.Bonus(firstGame, 1)
-	got := b.Bonus(secondGame, 1)
-
-	s.Equal(uint32(0), got.ExtraBonus)
-	s.Equal(uint32(0), got.Left)
-	s.Equal(uint32(12), got.Score)
-	s.Equal(valueobject.Strike, got.Status)
-	s.Equal(uint32(1), got.ThrowNumber)
-}
-
 func (s *GameSuite) TestGameWithoutExtraBonus() {
 	b := bowling.NewBowling("0", storage.NewInmemEventStorage())
 	g := b.NewBowlingGameWithoutExtraBonus(0)

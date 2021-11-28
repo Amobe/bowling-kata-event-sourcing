@@ -34,7 +34,7 @@ func (b *Bowling) Hit(game valueobject.BowlingGame, pins uint32) valueobject.Bow
 	return game
 }
 
-func (b *Bowling) Bonus(game valueobject.BowlingGame, pins uint32) valueobject.BowlingGame {
+func bonus(game valueobject.BowlingGame, pins uint32) valueobject.BowlingGame {
 	if game.ExtraBonus > 0 {
 		game.Score = game.Score + pins
 		game.ExtraBonus = game.ExtraBonus - 1

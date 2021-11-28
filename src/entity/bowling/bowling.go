@@ -73,7 +73,7 @@ func (b *Bowling) calculateGameHit(hit uint32, game valueobject.BowlingGame) {
 }
 
 func (b *Bowling) calculateGameBonus(hit uint32, game valueobject.BowlingGame) {
-	bonusedGame := b.Bonus(game, hit)
+	bonusedGame := bonus(game, hit)
 	b.raise(event.NewGameBonusedEvent(
 		bonusedGame.FrameNumber, bonusedGame.Score, bonusedGame.ExtraBonus))
 }
