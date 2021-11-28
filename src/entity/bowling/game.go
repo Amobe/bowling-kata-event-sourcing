@@ -20,10 +20,7 @@ func (b *Bowling) NewBowlingGameWithoutExtraBonus(frameNubmer uint32) valueobjec
 	}
 }
 
-func (b *Bowling) Hit(game valueobject.BowlingGame, pins uint32) valueobject.BowlingGame {
-	if NoMoreHit(game) {
-		return game
-	}
+func gameHit(game valueobject.BowlingGame, pins uint32) valueobject.BowlingGame {
 	game.ThrowNumber = game.ThrowNumber + 1
 	game.Left = game.Left - pins
 	game.Score = game.Score + pins
@@ -50,18 +47,11 @@ func isSpare(game valueobject.BowlingGame) bool {
 	return game.ThrowNumber == 2 && game.Left == 0
 }
 
-func gainExtraBonus(game valueobject.BowlingGame, extraBonus uint32) uint32 {
-	if game.WithoutExtraBonus {
-		return 0
-	}
-	return extraBonus
-}
-
 func getStatusBonus(game valueobject.BowlingGame) (s valueobject.BowlingGameStatus, extraBonus uint32) {
 	if isSpare(game) {
-		return valueobject.Spare, gainExtraBonus(game, 1)
+		return valueobject.Spare, 1
 	} else if isStrike(game) {
-		return valueobject.Strike, gainExtraBonus(game, 2)
+		return valueobject.Strike, 2
 	}
 	return valueobject.Open, 0
 }

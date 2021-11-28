@@ -68,7 +68,7 @@ func (b *Bowling) Reload() {
 }
 
 func (b *Bowling) calculateGameHit(hit uint32, game valueobject.BowlingGame) {
-	hitGame := b.Hit(game, hit)
+	hitGame := gameHit(game, hit)
 	b.raise(event.NewGameReplacedEvent(hitGame.FrameNumber, hitGame))
 }
 
