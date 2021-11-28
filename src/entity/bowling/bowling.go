@@ -52,7 +52,7 @@ func (b *Bowling) Throw(hit uint32) {
 	}
 	b.raise(event.NewThrownEvent(valueobject.Thrown, b.calculateScore(b.Games)))
 
-	if b.NoMoreHit(b.Games[b.FrameNumber]) || b.FrameNumber > 10 {
+	if NoMoreHit(b.Games[b.FrameNumber]) || b.FrameNumber > 10 {
 		b.Reload()
 	}
 }

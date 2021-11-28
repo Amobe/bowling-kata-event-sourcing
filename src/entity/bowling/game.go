@@ -21,7 +21,7 @@ func (b *Bowling) NewBowlingGameWithoutExtraBonus(frameNubmer uint32) valueobjec
 }
 
 func (b *Bowling) Hit(game valueobject.BowlingGame, pins uint32) valueobject.BowlingGame {
-	if b.NoMoreHit(game) {
+	if NoMoreHit(game) {
 		return game
 	}
 	game.ThrowNumber = game.ThrowNumber + 1
@@ -57,12 +57,8 @@ func (b *Bowling) gainExtraBonus(game valueobject.BowlingGame, extraBonus uint32
 	return extraBonus
 }
 
-func (b *Bowling) NoMoreHit(game valueobject.BowlingGame) bool {
-	return NoMoreHit(game.ThrowNumber, game.Status)
-}
-
-func NoMoreHit(throwNumber uint32, status valueobject.BowlingGameStatus) bool {
-	return throwNumber == 2 || status == valueobject.Strike
+func NoMoreHit(game valueobject.BowlingGame) bool {
+	return game.ThrowNumber == 2 || game.Status == valueobject.Strike
 }
 
 func (b *Bowling) getStatusBonus(game valueobject.BowlingGame) (s valueobject.BowlingGameStatus, extraBonus uint32) {

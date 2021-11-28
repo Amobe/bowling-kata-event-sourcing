@@ -102,11 +102,10 @@ func (s *GameSuite) TestGameWithoutExtraBonus() {
 }
 
 func (s *GameSuite) TestNoMoreHit() {
-	b := bowling.NewBowling("0", storage.NewInmemEventStorage())
 	twoHitGame := valueobject.BowlingGame{ThrowNumber: 2}
-	s.True(b.NoMoreHit(twoHitGame))
+	s.True(bowling.NoMoreHit(twoHitGame))
 	strikeGame := valueobject.BowlingGame{Status: valueobject.Strike}
-	s.True(b.NoMoreHit(strikeGame))
+	s.True(bowling.NoMoreHit(strikeGame))
 }
 
 func (s *GameSuite) TestHitAfterNoMoreHit() {
