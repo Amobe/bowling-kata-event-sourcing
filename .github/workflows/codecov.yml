@@ -14,7 +14,6 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: ${{ matrix.go }}
-      id: go version
     - name: Get dependencies
       run: go mod tidy
     - name: Build
