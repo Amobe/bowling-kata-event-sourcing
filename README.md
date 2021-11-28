@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/Amobe/bowling-kata-event-sourcing/branch/main/graph/badge.svg?token=1GOAFLSPBX)](https://codecov.io/gh/Amobe/bowling-kata-event-sourcing)
+
 Bowling Kata - event souring
 ===
 
