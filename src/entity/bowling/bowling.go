@@ -80,9 +80,9 @@ func (b *Bowling) calculateGameBonus(hit uint32, game valueobject.BowlingGame) {
 
 func (b *Bowling) createNewGame(frameNumber uint32) valueobject.BowlingGame {
 	if frameNumber > FrameWithExtraBonus {
-		return b.NewBowlingGameWithoutExtraBonus(frameNumber)
+		return newGameWithoutExtraBonus(frameNumber)
 	}
-	return b.NewBowlingGame(frameNumber)
+	return newGame(frameNumber)
 }
 
 func (b *Bowling) calculateScore(games map[uint32]valueobject.BowlingGame) (score uint32) {

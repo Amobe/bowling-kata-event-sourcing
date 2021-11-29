@@ -5,14 +5,14 @@ import "github.com/amobe/bowling-kata-event-sourcing/src/valueobject"
 const StandardPins = standardPins
 const standardPins = 10
 
-func (b *Bowling) NewBowlingGame(frameNubmer uint32) valueobject.BowlingGame {
+func newGame(frameNubmer uint32) valueobject.BowlingGame {
 	return valueobject.BowlingGame{
 		FrameNumber: frameNubmer,
 		Left:        standardPins,
 	}
 }
 
-func (b *Bowling) NewBowlingGameWithoutExtraBonus(frameNubmer uint32) valueobject.BowlingGame {
+func newGameWithoutExtraBonus(frameNubmer uint32) valueobject.BowlingGame {
 	return valueobject.BowlingGame{
 		FrameNumber:       frameNubmer,
 		Left:              standardPins,

@@ -311,3 +311,21 @@ func TestNoMoreHit(t *testing.T) {
 		})
 	}
 }
+
+func Test_newGame(t *testing.T) {
+	expectedGame := valueobject.BowlingGame{
+		FrameNumber:       1,
+		Left:              10,
+		WithoutExtraBonus: false,
+	}
+	assert.Equal(t, expectedGame, newGame(1))
+}
+
+func Test_newGameWithoutExtraBonus(t *testing.T) {
+	expectedGame := valueobject.BowlingGame{
+		FrameNumber:       1,
+		Left:              10,
+		WithoutExtraBonus: true,
+	}
+	assert.Equal(t, expectedGame, newGameWithoutExtraBonus(1))
+}
