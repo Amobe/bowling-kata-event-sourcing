@@ -100,42 +100,6 @@ func (b *Bowling) hasExtraFrame(frameNumber uint32, game valueobject.BowlingGame
 
 func (b *Bowling) raise(ev event.Event) {
 	_ = b.repo.Append(b.ID, ev)
-	b.On(ev, true)
-}
-
-func (b *Bowling) On(changed event.Event, isNew bool) {
-	switch ev := changed.Data().(type) {
-	case *event.ThrownEvent:
-		b.ApplyThrownEvent(ev)
-	case *event.GameReplacedEvent:
-		b.ApplyGameReplacedEvent(ev)
-	case *event.GameBonusedEvent:
-		b.ApplyGameBonusedEvent(ev)
-	case *event.ReloadedEvent:
-		b.ApplyReloadedEvent(ev)
-	}
-	if !isNew {
-		b.version++
-	}
-}
-
-func (b *Bowling) ApplyThrownEvent(ev *event.ThrownEvent) {
-	b.Status = ev.Status
-	b.Score = ev.Score
-}
-
-func (b *Bowling) ApplyGameReplacedEvent(ev *event.GameReplacedEvent) {
-	b.Games[ev.FrameNumber] = ev.Game
-}
-
-func (b *Bowling) ApplyGameBonusedEvent(ev *event.GameBonusedEvent) {
-	g := b.Games[ev.FrameNumber]
-	g.Score = ev.Score
-	g.ExtraBonus = ev.ExtraBonus
-	b.Games[ev.FrameNumber] = g
-}
-
-func (b *Bowling) ApplyReloadedEvent(ev *event.ReloadedEvent) {
-	b.Status = ev.Status
-	b.FrameNumber = ev.FrameNumber
+	on(ev, b)
+	b.version++
 }
