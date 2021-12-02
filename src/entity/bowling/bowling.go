@@ -41,10 +41,10 @@ func (b *Bowling) Throw(hit uint32) {
 	b.raise(calculateGameHit(hit, currentGame))
 
 	if b.FrameNumber > 1 {
-		b.calculateGameBonus(hit, b.Games[b.FrameNumber-1])
+		b.raise(calculateGameBonus(hit, b.Games[b.FrameNumber-1]))
 	}
 	if b.FrameNumber > 2 {
-		b.calculateGameBonus(hit, b.Games[b.FrameNumber-2])
+		b.raise(calculateGameBonus(hit, b.Games[b.FrameNumber-2]))
 	}
 
 	if b.Status == valueobject.FrameFinished {
@@ -72,10 +72,10 @@ func calculateGameHit(hit uint32, game valueobject.BowlingGame) event.Event {
 	return event.NewGameReplacedEvent(hitGame.FrameNumber, hitGame)
 }
 
-func (b *Bowling) calculateGameBonus(hit uint32, game valueobject.BowlingGame) {
+func calculateGameBonus(hit uint32, game valueobject.BowlingGame) event.Event {
 	bonusedGame := bonus(game, hit)
-	b.raise(event.NewGameBonusedEvent(
-		bonusedGame.FrameNumber, bonusedGame.Score, bonusedGame.ExtraBonus))
+	return event.NewGameBonusedEvent(
+		bonusedGame.FrameNumber, bonusedGame.Score, bonusedGame.ExtraBonus)
 }
 
 func (b *Bowling) createNewGame(frameNumber uint32) valueobject.BowlingGame {

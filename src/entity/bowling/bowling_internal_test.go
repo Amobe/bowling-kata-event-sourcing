@@ -24,3 +24,14 @@ func Test_calculateGameHit(t *testing.T) {
 	got := calculateGameHit(hit, game)
 	assert.EqualValues(t, want, got)
 }
+
+func Test_calculateGameBonus(t *testing.T) {
+	hit := uint32(3)
+	game := valueobject.BowlingGame{
+		FrameNumber: 2,
+		Left:        10,
+	}
+	want := event.NewGameBonusedEvent(2, 0, 0)
+	got := calculateGameBonus(hit, game)
+	assert.EqualValues(t, want, got)
+}
