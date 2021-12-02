@@ -38,7 +38,7 @@ func (b *Bowling) Throw(hit uint32) {
 	if !ok {
 		currentGame = b.createNewGame(b.FrameNumber)
 	}
-	b.calculateGameHit(hit, currentGame)
+	b.raise(calculateGameHit(hit, currentGame))
 
 	if b.FrameNumber > 1 {
 		b.calculateGameBonus(hit, b.Games[b.FrameNumber-1])
@@ -67,9 +67,9 @@ func (b *Bowling) Reload() {
 	b.raise(event.NewReloadedEvent(status, frameNumber))
 }
 
-func (b *Bowling) calculateGameHit(hit uint32, game valueobject.BowlingGame) {
+func calculateGameHit(hit uint32, game valueobject.BowlingGame) event.Event {
 	hitGame := gameHit(game, hit)
-	b.raise(event.NewGameReplacedEvent(hitGame.FrameNumber, hitGame))
+	return event.NewGameReplacedEvent(hitGame.FrameNumber, hitGame)
 }
 
 func (b *Bowling) calculateGameBonus(hit uint32, game valueobject.BowlingGame) {
