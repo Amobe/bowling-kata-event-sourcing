@@ -33,28 +33,32 @@ func NewBowling(id string, storage event.Repository) *Bowling {
 	return b
 }
 
-func (b *Bowling) Throw(hit uint32) {
+func (b *Bowling) Throw(hit uint32) (evs []event.Event) {
 	currentGame, ok := b.Games[b.FrameNumber]
 	if !ok {
 		currentGame = createNewGame(b.FrameNumber)
 	}
-	b.raise(calculateGameHit(hit, currentGame))
+	evs = append(evs, b.raise(calculateGameHit(hit, currentGame)))
 
 	if b.FrameNumber > 1 {
-		b.raise(calculateGameBonus(hit, b.Games[b.FrameNumber-1]))
+		evs = append(evs,
+			b.raise(calculateGameBonus(hit, b.Games[b.FrameNumber-1])))
 	}
 	if b.FrameNumber > 2 {
-		b.raise(calculateGameBonus(hit, b.Games[b.FrameNumber-2]))
+		evs = append(evs,
+			b.raise(calculateGameBonus(hit, b.Games[b.FrameNumber-2])))
 	}
 
 	if b.Status == valueobject.FrameFinished {
 		return
 	}
-	b.raise(event.NewThrownEvent(valueobject.Thrown, calculateScore(b.Games)))
+	evs = append(evs,
+		b.raise(event.NewThrownEvent(valueobject.Thrown, calculateScore(b.Games))))
 
 	if NoMoreHit(b.Games[b.FrameNumber]) || b.FrameNumber > 10 {
-		b.raise(b.Reload())
+		evs = append(evs, b.raise(b.Reload()))
 	}
+	return
 }
 
 func (b *Bowling) Reload() event.Event {
@@ -98,8 +102,8 @@ func (b *Bowling) hasExtraFrame(frameNumber uint32, game valueobject.BowlingGame
 	return !(openEnd || strikeTwice)
 }
 
-func (b *Bowling) raise(ev event.Event) {
-	_ = b.repo.Append(b.ID, ev)
+func (b *Bowling) raise(ev event.Event) event.Event {
 	on(ev, b)
 	b.version++
+	return ev
 }
