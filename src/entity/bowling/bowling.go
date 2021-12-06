@@ -36,7 +36,7 @@ func NewBowling(id string, storage event.Repository) *Bowling {
 func (b *Bowling) Throw(hit uint32) {
 	currentGame, ok := b.Games[b.FrameNumber]
 	if !ok {
-		currentGame = b.createNewGame(b.FrameNumber)
+		currentGame = createNewGame(b.FrameNumber)
 	}
 	b.raise(calculateGameHit(hit, currentGame))
 
@@ -50,7 +50,7 @@ func (b *Bowling) Throw(hit uint32) {
 	if b.Status == valueobject.FrameFinished {
 		return
 	}
-	b.raise(event.NewThrownEvent(valueobject.Thrown, b.calculateScore(b.Games)))
+	b.raise(event.NewThrownEvent(valueobject.Thrown, calculateScore(b.Games)))
 
 	if NoMoreHit(b.Games[b.FrameNumber]) || b.FrameNumber > 10 {
 		b.raise(b.Reload())
@@ -78,14 +78,14 @@ func calculateGameBonus(hit uint32, game valueobject.BowlingGame) event.Event {
 		bonusedGame.FrameNumber, bonusedGame.Score, bonusedGame.ExtraBonus)
 }
 
-func (b *Bowling) createNewGame(frameNumber uint32) valueobject.BowlingGame {
+func createNewGame(frameNumber uint32) valueobject.BowlingGame {
 	if frameNumber > FrameWithExtraBonus {
 		return newGameWithoutExtraBonus(frameNumber)
 	}
 	return newGame(frameNumber)
 }
 
-func (b *Bowling) calculateScore(games map[uint32]valueobject.BowlingGame) (score uint32) {
+func calculateScore(games map[uint32]valueobject.BowlingGame) (score uint32) {
 	for _, g := range games {
 		score = score + g.Score
 	}
