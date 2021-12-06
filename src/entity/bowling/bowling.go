@@ -53,18 +53,18 @@ func (b *Bowling) Throw(hit uint32) {
 	b.raise(event.NewThrownEvent(valueobject.Thrown, b.calculateScore(b.Games)))
 
 	if NoMoreHit(b.Games[b.FrameNumber]) || b.FrameNumber > 10 {
-		b.Reload()
+		b.raise(b.Reload())
 	}
 }
 
-func (b *Bowling) Reload() {
+func (b *Bowling) Reload() event.Event {
 	status := valueobject.FrameFinished
 	frameNumber := b.FrameNumber
 	if b.hasExtraFrame(b.FrameNumber, b.Games[b.FrameNumber]) {
 		status = b.Status
 		frameNumber = b.FrameNumber + 1
 	}
-	b.raise(event.NewReloadedEvent(status, frameNumber))
+	return event.NewReloadedEvent(status, frameNumber)
 }
 
 func calculateGameHit(hit uint32, game valueobject.BowlingGame) event.Event {
