@@ -1,6 +1,8 @@
 package storage
 
 import (
+	"fmt"
+
 	"github.com/amobe/bowling-kata-event-sourcing/src/event"
 )
 
@@ -14,7 +16,15 @@ func NewInmemEventStorage() *storage {
 	}
 }
 
-func (s *storage) Append(id string, ev event.Event) error {
-	s.changes[id] = append(s.changes[id], ev)
+func (s *storage) Get(id string) ([]event.Event, error) {
+	evs, ok := s.changes[id]
+	if !ok {
+		return nil, fmt.Errorf("record not found")
+	}
+	return evs, nil
+}
+
+func (s *storage) Append(id string, evs ...event.Event) error {
+	s.changes[id] = append(s.changes[id], evs...)
 	return nil
 }
