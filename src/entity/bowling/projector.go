@@ -3,7 +3,7 @@ package bowling
 import "github.com/amobe/bowling-kata-event-sourcing/src/event"
 
 func Projector(id string, evs []event.Event) *Bowling {
-	b := NewBowling(id, nil)
+	b := NewBowling(id)
 	for _, ev := range evs {
 		on(ev, b)
 	}

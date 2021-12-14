@@ -4,10 +4,51 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/amobe/bowling-kata-event-sourcing/src/event"
 	"github.com/amobe/bowling-kata-event-sourcing/src/event/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestNewBowlingService(t *testing.T) {
+	type args struct {
+		getRepo func(*testing.T) event.Repository
+	}
+	tests := []struct {
+		name         string
+		args         args
+		gotAssertion assert.ValueAssertionFunc
+		errAssertion assert.ErrorAssertionFunc
+	}{
+		{
+			name: "new bowling service",
+			args: args{
+				getRepo: func(t *testing.T) event.Repository {
+					return mocks.NewMockRepository(gomock.NewController(t))
+				},
+			},
+			gotAssertion: assert.NotNil,
+			errAssertion: assert.NoError,
+		},
+		{
+			name: "repository is nil",
+			args: args{
+				getRepo: func(t *testing.T) event.Repository {
+					return nil
+				},
+			},
+			gotAssertion: assert.Nil,
+			errAssertion: assert.Error,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := NewBowlingService(tt.args.getRepo(t))
+			tt.errAssertion(t, err)
+			tt.gotAssertion(t, got)
+		})
+	}
+}
 
 func Test_bowlingService_Throw(t *testing.T) {
 	type fields struct {

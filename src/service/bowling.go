@@ -17,6 +17,15 @@ type bowlingService struct {
 	repo event.Repository
 }
 
+func NewBowlingService(repo event.Repository) (Bowling, error) {
+	if repo == nil {
+		return nil, fmt.Errorf("repository is nil")
+	}
+	return &bowlingService{
+		repo: repo,
+	}, nil
+}
+
 func (s *bowlingService) Throw(id string, hit uint32) error {
 	evs, err := s.repo.Get(id)
 	if err != nil {

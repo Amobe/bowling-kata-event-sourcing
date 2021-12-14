@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/amobe/bowling-kata-event-sourcing/src/entity/bowling"
-	"github.com/amobe/bowling-kata-event-sourcing/src/storage"
 	"github.com/amobe/bowling-kata-event-sourcing/src/valueobject"
 	"github.com/stretchr/testify/suite"
 )
@@ -117,7 +116,7 @@ func (s *BowlingSuite) TestFinishedWithPerfectGame() {
 }
 
 func getPreparedBowlingGame() *bowling.Bowling {
-	return bowling.NewBowling("0", storage.NewInmemEventStorage())
+	return bowling.NewBowling("0")
 }
 
 func getOneHitArray() []uint32 {

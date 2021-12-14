@@ -11,6 +11,10 @@ const (
 	FrameWithExtraBonus = 9
 )
 
+type XBowling interface {
+	Throw(hit uint32) []event.Event
+}
+
 type Bowling struct {
 	ID          string
 	FrameNumber uint32
@@ -18,17 +22,15 @@ type Bowling struct {
 	Score       uint32
 	Games       map[uint32]valueobject.BowlingGame
 
-	repo    event.Repository
 	version int
 }
 
-func NewBowling(id string, storage event.Repository) *Bowling {
+func NewBowling(id string) *Bowling {
 	b := &Bowling{
 		ID:          id,
 		FrameNumber: 1,
 		Status:      valueobject.GamePrepared,
 		Games:       make(map[uint32]valueobject.BowlingGame, standardFrameNumber+maxExtraFrameNumber),
-		repo:        storage,
 	}
 	return b
 }
