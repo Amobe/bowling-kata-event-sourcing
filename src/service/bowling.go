@@ -7,6 +7,7 @@ import (
 	"github.com/amobe/bowling-kata-event-sourcing/src/event"
 )
 
+//go:generate mockgen -destination mocks/mock_bowling.go -package mocks -source bowling.go
 type Bowling interface {
 	Throw(id string, hit uint32) error
 }

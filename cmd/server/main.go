@@ -21,6 +21,6 @@ func main() {
 	}
 
 	g := gin.Default()
-	g.POST("/roll", bh.Handle)
+	g.POST("/roll", handler.GetGinHandler(bh))
 	log.Fatal(g.Run(":80"))
 }
