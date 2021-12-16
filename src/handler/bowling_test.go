@@ -9,7 +9,46 @@ import (
 	"github.com/amobe/bowling-kata-event-sourcing/src/service"
 	ms "github.com/amobe/bowling-kata-event-sourcing/src/service/mocks"
 	"github.com/golang/mock/gomock"
+	"github.com/stretchr/testify/assert"
 )
+
+func TestNewBowlingHandler(t *testing.T) {
+	type args struct {
+		bs service.Bowling
+	}
+	tests := []struct {
+		name      string
+		args      args
+		want      Handler
+		assertion assert.ErrorAssertionFunc
+	}{
+		{
+			name: "new bowling handler",
+			args: args{
+				bs: &ms.MockBowling{},
+			},
+			want: &bowlingHandler{
+				bs: &ms.MockBowling{},
+			},
+			assertion: assert.NoError,
+		},
+		{
+			name: "bowling service is nill",
+			args: args{
+				bs: nil,
+			},
+			want:      nil,
+			assertion: assert.Error,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := NewBowlingHandler(tt.args.bs)
+			tt.assertion(t, err)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
 
 func Test_bowlingHandler_Handle(t *testing.T) {
 	type fields struct {
