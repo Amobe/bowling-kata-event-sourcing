@@ -62,16 +62,16 @@ func (b *Bowling) Throw(hit uint32) (evs []event.Event) {
 func (b *Bowling) Reload() event.Event {
 	status := valueobject.FrameFinished
 	frameNumber := b.FrameNumber
-	if b.hasExtraFrame(b.FrameNumber, b.Games[b.FrameNumber]) {
+	if hasExtraFrame(b.FrameNumber, b.Games[b.FrameNumber]) {
 		status = b.Status
 		frameNumber = b.FrameNumber + 1
 	}
 	return event.NewReloadedEvent(status, frameNumber)
 }
 
-func (b *Bowling) hasExtraFrame(frameNumber uint32, game valueobject.BowlingGame) bool {
-	openEnd := b.FrameNumber >= standardFrameNumber && b.Games[b.FrameNumber].Status == valueobject.Open
-	strikeTwice := b.FrameNumber == standardFrameNumber+maxExtraFrameNumber && b.Games[b.FrameNumber].Status == valueobject.Strike
+func hasExtraFrame(frameNumber uint32, game valueobject.BowlingGame) bool {
+	openEnd := frameNumber >= standardFrameNumber && game.Status == valueobject.Open
+	strikeTwice := frameNumber == standardFrameNumber+maxExtraFrameNumber && game.Status == valueobject.Strike
 	return !(openEnd || strikeTwice)
 }
 

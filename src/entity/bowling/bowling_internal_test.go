@@ -88,3 +88,61 @@ func Test_calculateScore(t *testing.T) {
 	got := calculateScore(games)
 	assert.Equal(t, want, got)
 }
+
+func Test_hasExtraFrame(t *testing.T) {
+	type args struct {
+		frameNumber uint32
+		game        valueobject.BowlingGame
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "don't have extea frame - open end",
+			args: args{
+				frameNumber: 10,
+				game: valueobject.BowlingGame{
+					Status: valueobject.Open,
+				},
+			},
+			want: false,
+		},
+		{
+			name: "don't have extea frame - strike twice",
+			args: args{
+				frameNumber: 12,
+				game: valueobject.BowlingGame{
+					Status: valueobject.Strike,
+				},
+			},
+			want: false,
+		},
+		{
+			name: "have extra frame - spare on 11th frame",
+			args: args{
+				frameNumber: 11,
+				game: valueobject.BowlingGame{
+					Status: valueobject.Spare,
+				},
+			},
+			want: true,
+		},
+		{
+			name: "have extra frame - strike on 10th frame",
+			args: args{
+				frameNumber: 10,
+				game: valueobject.BowlingGame{
+					Status: valueobject.Strike,
+				},
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, hasExtraFrame(tt.args.frameNumber, tt.args.game))
+		})
+	}
+}
