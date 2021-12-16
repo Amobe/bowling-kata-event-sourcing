@@ -11,10 +11,6 @@ const (
 	FrameWithExtraBonus = 9
 )
 
-type XBowling interface {
-	Throw(hit uint32) []event.Event
-}
-
 type Bowling struct {
 	ID          string
 	FrameNumber uint32
@@ -73,6 +69,18 @@ func (b *Bowling) Reload() event.Event {
 	return event.NewReloadedEvent(status, frameNumber)
 }
 
+func (b *Bowling) hasExtraFrame(frameNumber uint32, game valueobject.BowlingGame) bool {
+	openEnd := b.FrameNumber >= standardFrameNumber && b.Games[b.FrameNumber].Status == valueobject.Open
+	strikeTwice := b.FrameNumber == standardFrameNumber+maxExtraFrameNumber && b.Games[b.FrameNumber].Status == valueobject.Strike
+	return !(openEnd || strikeTwice)
+}
+
+func (b *Bowling) raise(ev event.Event) event.Event {
+	on(ev, b)
+	b.version++
+	return ev
+}
+
 func calculateGameHit(hit uint32, game valueobject.BowlingGame) event.Event {
 	hitGame := gameHit(game, hit)
 	return event.NewGameReplacedEvent(hitGame.FrameNumber, hitGame)
@@ -96,16 +104,4 @@ func calculateScore(games map[uint32]valueobject.BowlingGame) (score uint32) {
 		score = score + g.Score
 	}
 	return
-}
-
-func (b *Bowling) hasExtraFrame(frameNumber uint32, game valueobject.BowlingGame) bool {
-	openEnd := b.FrameNumber >= standardFrameNumber && b.Games[b.FrameNumber].Status == valueobject.Open
-	strikeTwice := b.FrameNumber == standardFrameNumber+maxExtraFrameNumber && b.Games[b.FrameNumber].Status == valueobject.Strike
-	return !(openEnd || strikeTwice)
-}
-
-func (b *Bowling) raise(ev event.Event) event.Event {
-	on(ev, b)
-	b.version++
-	return ev
 }
