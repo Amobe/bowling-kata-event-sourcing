@@ -128,7 +128,7 @@ func (s *RollABallUseCaseTestSuite) TestRollABallWithSpareHasNoLeavingPinsAndNot
 	s.Equal(0, output.BonusRemainHit())
 }
 
-func (s *RollABallUseCaseTestSuite) TestRollABallAfterSpareHasBonusValueAndLeavingPinsIsRestored() {
+func (s *RollABallUseCaseTestSuite) TestRollABallAfterSpareHasBonusScoreAndLeavingPinsIsRestored() {
 	gameID := s.createBowlingGame()
 	s.hasSpare(gameID)
 
@@ -142,6 +142,50 @@ func (s *RollABallUseCaseTestSuite) TestRollABallAfterSpareHasBonusValueAndLeavi
 	s.NoError(err)
 	s.Equal(12, output.Score())
 	s.Equal(9, output.LeavingPins())
+}
+
+func (s *RollABallUseCaseTestSuite) TestRollABallWithStrikeHasNoLeavingPinsAndOneBonusRemainHit() {
+	gameID := s.createBowlingGame()
+	s.hasStrike(gameID)
+
+	ctx := context.Background()
+	output, err := s.repository.FindByID(ctx, gameID)
+	s.NoError(err)
+	s.Equal(0, output.LeavingPins())
+	s.Equal(1, output.BonusRemainHit())
+}
+
+func (s *RollABallUseCaseTestSuite) TestRollABallAfterStrikeHasTwoBonusScoreAndLeavingPinsIsRestored() {
+	gameID := s.createBowlingGame()
+	s.hasStrike(gameID)
+
+	ctx := context.Background()
+	rollABallUseCase := NewRollABallServiceService(s.repository)
+	_, _ = rollABallUseCase.execute(ctx, in.RollABallInput{
+		GameID: gameID,
+		Hit:    1,
+	})
+	_, _ = rollABallUseCase.execute(ctx, in.RollABallInput{
+		GameID: gameID,
+		Hit:    1,
+	})
+	output, err := s.repository.FindByID(ctx, gameID)
+	s.NoError(err)
+	s.Equal(14, output.Score())
+	s.Equal(8, output.LeavingPins())
+}
+
+func (s *RollABallUseCaseTestSuite) TestRollABallWithAPerfectGame() {
+	gameID := s.createBowlingGame()
+
+	for i := 0; i < 12; i++ {
+		s.hasStrike(gameID)
+	}
+
+	ctx := context.Background()
+	output, err := s.repository.FindByID(ctx, gameID)
+	s.NoError(err)
+	s.Equal(300, output.Score())
 }
 
 func (s *RollABallUseCaseTestSuite) createBowlingGame() string {
@@ -165,6 +209,15 @@ func (s *RollABallUseCaseTestSuite) hasSpare(gameID string) {
 	_, _ = rollABallUseCase.execute(ctx, in.RollABallInput{
 		GameID: gameID,
 		Hit:    9,
+	})
+}
+
+func (s *RollABallUseCaseTestSuite) hasStrike(gameID string) {
+	ctx := context.Background()
+	rollABallUseCase := NewRollABallServiceService(s.repository)
+	_, _ = rollABallUseCase.execute(ctx, in.RollABallInput{
+		GameID: gameID,
+		Hit:    10,
 	})
 }
 

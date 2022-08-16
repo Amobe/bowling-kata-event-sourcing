@@ -8,11 +8,13 @@ import (
 
 type BowlingGame struct {
 	*core.AggregateRoot
-	gameID         string
-	score          int
-	throwingCount  int
-	leavingPins    int
-	bonusRemainHit int
+	gameID             string
+	score              int
+	throwingCount      int
+	leavingPins        int
+	bonusRemainHit     int
+	bonusRemainChance  int
+	finishedFrameCount int
 }
 
 func newBowlingGame() *BowlingGame {
@@ -83,9 +85,22 @@ func (b *BowlingGame) When(domainEvent core.DomainEvent) {
 			b.bonusRemainHit = 2
 			b.leavingPins = 10
 		}
+		if b.bonusRemainChance > 0 && b.finishedFrameCount < 9 {
+			b.score += event.hit
+			b.bonusRemainChance -= 1
+		}
+		if b.bonusRemainHit == 1 && b.leavingPins == 0 {
+			b.score += event.hit
+			b.bonusRemainHit = 2
+			b.leavingPins = 10
+			b.bonusRemainChance += 1
+		}
 		b.score += event.hit
 		b.leavingPins -= event.hit
 		b.bonusRemainHit -= 1
+		if b.leavingPins == 0 {
+			b.finishedFrameCount += 1
+		}
 	}
 	log.Printf("%s: %#v", domainEvent, b)
 }
