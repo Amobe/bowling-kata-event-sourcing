@@ -19,3 +19,11 @@ func TestReplayBowlingGameFromBowlingGameCreatedEvent(t *testing.T) {
 	assert.Equal(t, event.gameID, bowlingGame.GameID())
 	assert.Equal(t, 0, len(bowlingGame.DomainEvents()))
 }
+
+func TestThrowCommandGenerateBowlingGameThrownEvent(t *testing.T) {
+	event := NewBowlingGameCreated("abc")
+	bowlingGame := ReplayBowlingGame([]core.DomainEvent{event})
+	bowlingGame.RollABall(1)
+	assert.Equal(t, 1, len(bowlingGame.DomainEvents()))
+	assert.IsType(t, BowlingGameRolledABall{}, bowlingGame.DomainEvents()[0])
+}

@@ -24,3 +24,17 @@ func NewBowlingGameCreated(gameID string) BowlingGameCreated {
 		gameID: gameID,
 	}
 }
+
+type BowlingGameRolledABall struct {
+	BowlingGameEvents
+	hit int
+}
+
+func NewBowlingGameRollABall(hit int) BowlingGameRolledABall {
+	return BowlingGameRolledABall{
+		BowlingGameEvents: BowlingGameEvents{
+			name: "BowlingGameRolledABall",
+		},
+		hit: hit,
+	}
+}
