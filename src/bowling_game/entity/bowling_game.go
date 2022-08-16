@@ -54,6 +54,20 @@ func (b BowlingGame) BonusRemainHit() int {
 	return b.bonusRemainHit
 }
 
+func (b BowlingGame) BonusChance() []int {
+	cloneBonusChance := make([]int, len(b.bonusChance))
+	copy(cloneBonusChance, b.bonusChance)
+	return cloneBonusChance
+}
+
+func (b BowlingGame) FinishedFrameCount() int {
+	return b.finishedFrameCount
+}
+
+func (b BowlingGame) BonusFrame() int {
+	return b.bonusFrame
+}
+
 func (b *BowlingGame) RollABall(hit int) error {
 	if (b.finishedFrameCount-b.bonusFrame > 9) ||
 		(b.finishedFrameCount > 9 && (b.bonusFrame == 1 && b.bonusRemainHit == 1)) {
