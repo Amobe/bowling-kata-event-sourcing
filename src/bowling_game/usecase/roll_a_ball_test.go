@@ -77,27 +77,30 @@ func (s *RollABallUseCaseTestSuite) TestRollTwentyBallHasTwentyScore() {
 	}
 	output, err := s.repository.FindByID(ctx, gameID)
 	s.NoError(err)
-	s.Equal(20, output.ThrowingCount())
 	s.Equal(20, output.Score())
 }
 
 func (s *RollABallUseCaseTestSuite) TestRollTwentyOneBallHasTwentyScore() {
 	gameID := s.createBowlingGame()
+	s.rollManyBall(gameID, 1, 20)
+
+	ctx := context.Background()
+	output, err := s.repository.FindByID(ctx, gameID)
+	s.NoError(err)
+	s.Equal(20, output.Score())
+}
+
+func (s *RollABallUseCaseTestSuite) TestUnableToRollABallAfterGameFinished_TwentyBallWithoutSpareAndStrike() {
+	gameID := s.createBowlingGame()
+	s.rollManyBall(gameID, 1, 20)
 
 	ctx := context.Background()
 	rollABallUseCase := NewRollABallServiceService(s.repository)
-	input := in.RollABallInput{
+	_, err := rollABallUseCase.execute(ctx, in.RollABallInput{
 		GameID: gameID,
 		Hit:    1,
-	}
-
-	for i := 0; i < 21; i++ {
-		_, _ = rollABallUseCase.execute(ctx, input)
-	}
-	output, err := s.repository.FindByID(ctx, gameID)
-	s.NoError(err)
-	s.Equal(20, output.ThrowingCount())
-	s.Equal(20, output.Score())
+	})
+	s.Error(err)
 }
 
 func (s *RollABallUseCaseTestSuite) TestRollABallShouldNotHasNegativeHitValue() {
@@ -109,12 +112,8 @@ func (s *RollABallUseCaseTestSuite) TestRollABallShouldNotHasNegativeHitValue() 
 		GameID: gameID,
 		Hit:    -1,
 	}
-
-	_, _ = rollABallUseCase.execute(ctx, input)
-	output, err := s.repository.FindByID(ctx, gameID)
-	s.NoError(err)
-	s.Equal(0, output.ThrowingCount())
-	s.Equal(0, output.Score())
+	_, err := rollABallUseCase.execute(ctx, input)
+	s.Error(err)
 }
 
 func (s *RollABallUseCaseTestSuite) TestRollABallWithSpareHasNoLeavingPinsAndNotBonusRemainHit() {
@@ -172,20 +171,30 @@ func (s *RollABallUseCaseTestSuite) TestRollABallAfterStrikeHasTwoBonusScoreAndL
 	output, err := s.repository.FindByID(ctx, gameID)
 	s.NoError(err)
 	s.Equal(14, output.Score())
-	s.Equal(8, output.LeavingPins())
+	s.Equal(10, output.LeavingPins())
 }
 
 func (s *RollABallUseCaseTestSuite) TestRollABallWithAPerfectGame() {
 	gameID := s.createBowlingGame()
-
-	for i := 0; i < 12; i++ {
-		s.hasStrike(gameID)
-	}
+	s.hasManyStrike(gameID, 12)
 
 	ctx := context.Background()
 	output, err := s.repository.FindByID(ctx, gameID)
 	s.NoError(err)
 	s.Equal(300, output.Score())
+}
+
+func (s *RollABallUseCaseTestSuite) TestRollABallWithSpareInFinalFrameHasOneBonusFrame() {
+	gameID := s.createBowlingGame()
+	s.hasManySpare(gameID, 10)
+
+	ctx := context.Background()
+	rollABallUseCase := NewRollABallServiceService(s.repository)
+	_, err := rollABallUseCase.execute(ctx, in.RollABallInput{
+		GameID: gameID,
+		Hit:    1,
+	})
+	s.NoError(err)
 }
 
 func (s *RollABallUseCaseTestSuite) createBowlingGame() string {
@@ -199,6 +208,23 @@ func (s *RollABallUseCaseTestSuite) createBowlingGame() string {
 	return gameID
 }
 
+func (s *RollABallUseCaseTestSuite) rollManyBall(gameID string, hit int, times int) {
+	ctx := context.Background()
+	rollABallUseCase := NewRollABallServiceService(s.repository)
+	for i := 0; i < times; i++ {
+		_, _ = rollABallUseCase.execute(ctx, in.RollABallInput{
+			GameID: gameID,
+			Hit:    hit,
+		})
+	}
+}
+
+func (s *RollABallUseCaseTestSuite) hasManySpare(gameID string, times int) {
+	for i := 0; i < times; i++ {
+		s.hasSpare(gameID)
+	}
+}
+
 func (s *RollABallUseCaseTestSuite) hasSpare(gameID string) {
 	ctx := context.Background()
 	rollABallUseCase := NewRollABallServiceService(s.repository)
@@ -210,6 +236,12 @@ func (s *RollABallUseCaseTestSuite) hasSpare(gameID string) {
 		GameID: gameID,
 		Hit:    9,
 	})
+}
+
+func (s *RollABallUseCaseTestSuite) hasManyStrike(gameID string, times int) {
+	for i := 0; i < times; i++ {
+		s.hasStrike(gameID)
+	}
 }
 
 func (s *RollABallUseCaseTestSuite) hasStrike(gameID string) {

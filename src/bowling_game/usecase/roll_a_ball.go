@@ -23,7 +23,9 @@ func (s *RollABallService) execute(ctx context.Context, input in.RollABallInput)
 	if err != nil {
 		return "", fmt.Errorf("repository find bowling game by id: %w", err)
 	}
-	bowlingGame.RollABall(input.Hit)
+	if err := bowlingGame.RollABall(input.Hit); err != nil {
+		return "", fmt.Errorf("bowling game roll a ball: %w", err)
+	}
 	if err := s.repository.Save(ctx, bowlingGame); err != nil {
 		return "", fmt.Errorf("repository save bowling game: %w", err)
 	}
