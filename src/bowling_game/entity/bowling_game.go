@@ -13,7 +13,7 @@ type BowlingGame struct {
 	throwingCount      int
 	leavingPins        int
 	bonusRemainHit     int
-	bonusRemainChance  int
+	bonusChance        []int
 	finishedFrameCount int
 }
 
@@ -78,29 +78,40 @@ func (b *BowlingGame) When(domainEvent core.DomainEvent) {
 		b.bonusRemainHit = 2
 	case BowlingGameRolledABall:
 		b.throwingCount = b.throwingCount + 1
-		if b.bonusRemainHit == 0 && b.leavingPins == 0 {
-			b.score += event.hit
-		}
-		if b.bonusRemainHit == 0 {
-			b.bonusRemainHit = 2
-			b.leavingPins = 10
-		}
-		if b.bonusRemainChance > 0 && b.finishedFrameCount < 9 {
-			b.score += event.hit
-			b.bonusRemainChance -= 1
-		}
-		if b.bonusRemainHit == 1 && b.leavingPins == 0 {
-			b.score += event.hit
-			b.bonusRemainHit = 2
-			b.leavingPins = 10
-			b.bonusRemainChance += 1
-		}
 		b.score += event.hit
 		b.leavingPins -= event.hit
 		b.bonusRemainHit -= 1
+		for i, chance := range b.bonusChance {
+			if chance > 0 {
+				b.score += event.hit
+				b.bonusChance[i] = chance - 1
+			}
+		}
+		if frameHasBonusChange(b.finishedFrameCount) {
+			if strike(b.leavingPins, b.bonusRemainHit) {
+				b.bonusChance = append(b.bonusChance, 2)
+			}
+			if spare(b.leavingPins, b.bonusRemainHit) {
+				b.bonusChance = append(b.bonusChance, 1)
+			}
+		}
 		if b.leavingPins == 0 {
 			b.finishedFrameCount += 1
+			b.leavingPins = 10
+			b.bonusRemainHit = 2
 		}
 	}
 	log.Printf("%s: %#v", domainEvent, b)
+}
+
+func frameHasBonusChange(finishedFrameCount int) bool {
+	return finishedFrameCount < 9
+}
+
+func strike(leavingPins, bonusRemainHit int) bool {
+	return leavingPins == 0 && bonusRemainHit == 1
+}
+
+func spare(leavingPins, bonusRemainHit int) bool {
+	return leavingPins == 0 && bonusRemainHit == 0
 }

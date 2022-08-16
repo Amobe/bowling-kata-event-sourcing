@@ -124,8 +124,8 @@ func (s *RollABallUseCaseTestSuite) TestRollABallWithSpareHasNoLeavingPinsAndNot
 	ctx := context.Background()
 	output, err := s.repository.FindByID(ctx, gameID)
 	s.NoError(err)
-	s.Equal(0, output.LeavingPins())
-	s.Equal(0, output.BonusRemainHit())
+	s.Equal(10, output.LeavingPins())
+	s.Equal(2, output.BonusRemainHit())
 }
 
 func (s *RollABallUseCaseTestSuite) TestRollABallAfterSpareHasBonusScoreAndLeavingPinsIsRestored() {
@@ -151,8 +151,8 @@ func (s *RollABallUseCaseTestSuite) TestRollABallWithStrikeHasNoLeavingPinsAndOn
 	ctx := context.Background()
 	output, err := s.repository.FindByID(ctx, gameID)
 	s.NoError(err)
-	s.Equal(0, output.LeavingPins())
-	s.Equal(1, output.BonusRemainHit())
+	s.Equal(10, output.LeavingPins())
+	s.Equal(2, output.BonusRemainHit())
 }
 
 func (s *RollABallUseCaseTestSuite) TestRollABallAfterStrikeHasTwoBonusScoreAndLeavingPinsIsRestored() {
