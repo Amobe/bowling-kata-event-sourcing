@@ -117,6 +117,33 @@ func (s *RollABallUseCaseTestSuite) TestRollABallShouldNotHasNegativeHitValue() 
 	s.Equal(0, output.Score())
 }
 
+func (s *RollABallUseCaseTestSuite) TestRollABallWithSpareHasNoLeavingPinsAndNotBonusRemainHit() {
+	gameID := s.createBowlingGame()
+	s.hasSpare(gameID)
+
+	ctx := context.Background()
+	output, err := s.repository.FindByID(ctx, gameID)
+	s.NoError(err)
+	s.Equal(0, output.LeavingPins())
+	s.Equal(0, output.BonusRemainHit())
+}
+
+func (s *RollABallUseCaseTestSuite) TestRollABallAfterSpareHasBonusValueAndLeavingPinsIsRestored() {
+	gameID := s.createBowlingGame()
+	s.hasSpare(gameID)
+
+	ctx := context.Background()
+	rollABallUseCase := NewRollABallServiceService(s.repository)
+	_, _ = rollABallUseCase.execute(ctx, in.RollABallInput{
+		GameID: gameID,
+		Hit:    1,
+	})
+	output, err := s.repository.FindByID(ctx, gameID)
+	s.NoError(err)
+	s.Equal(12, output.Score())
+	s.Equal(9, output.LeavingPins())
+}
+
 func (s *RollABallUseCaseTestSuite) createBowlingGame() string {
 	createBowlingGameUseCase := NewCreateBowlingGameService(s.repository)
 	gameID := uuid.New().String()
@@ -126,6 +153,19 @@ func (s *RollABallUseCaseTestSuite) createBowlingGame() string {
 
 	_, _ = createBowlingGameUseCase.execute(context.Background(), input)
 	return gameID
+}
+
+func (s *RollABallUseCaseTestSuite) hasSpare(gameID string) {
+	ctx := context.Background()
+	rollABallUseCase := NewRollABallServiceService(s.repository)
+	_, _ = rollABallUseCase.execute(ctx, in.RollABallInput{
+		GameID: gameID,
+		Hit:    1,
+	})
+	_, _ = rollABallUseCase.execute(ctx, in.RollABallInput{
+		GameID: gameID,
+		Hit:    9,
+	})
 }
 
 type fakeRollABallListener struct {
