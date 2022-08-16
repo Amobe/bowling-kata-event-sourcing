@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/amobe/bowling-kata-event-sourcing/src/service"
+	"github.com/amobe/bowling-kata-event-sourcing/src/v0/service"
 )
 
 type bowlingHandler struct {

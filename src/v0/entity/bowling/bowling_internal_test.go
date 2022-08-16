@@ -3,8 +3,8 @@ package bowling
 import (
 	"testing"
 
-	"github.com/amobe/bowling-kata-event-sourcing/src/event"
-	"github.com/amobe/bowling-kata-event-sourcing/src/valueobject"
+	"github.com/amobe/bowling-kata-event-sourcing/src/v0/event"
+	"github.com/amobe/bowling-kata-event-sourcing/src/v0/valueobject"
 	"github.com/stretchr/testify/assert"
 )
 

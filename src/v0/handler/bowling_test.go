@@ -5,9 +5,9 @@ import (
 	"os"
 	"testing"
 
-	mh "github.com/amobe/bowling-kata-event-sourcing/src/handler/mocks"
-	"github.com/amobe/bowling-kata-event-sourcing/src/service"
-	ms "github.com/amobe/bowling-kata-event-sourcing/src/service/mocks"
+	mh "github.com/amobe/bowling-kata-event-sourcing/src/v0/handler/mocks"
+	"github.com/amobe/bowling-kata-event-sourcing/src/v0/service"
+	ms "github.com/amobe/bowling-kata-event-sourcing/src/v0/service/mocks"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )

@@ -7,7 +7,7 @@ package mocks
 import (
 	reflect "reflect"
 
-	event "github.com/amobe/bowling-kata-event-sourcing/src/event"
+	"github.com/amobe/bowling-kata-event-sourcing/src/v0/event"
 	gomock "github.com/golang/mock/gomock"
 )
 

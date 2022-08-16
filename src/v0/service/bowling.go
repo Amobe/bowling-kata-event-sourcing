@@ -3,8 +3,8 @@ package service
 import (
 	"fmt"
 
-	"github.com/amobe/bowling-kata-event-sourcing/src/entity/bowling"
-	"github.com/amobe/bowling-kata-event-sourcing/src/event"
+	"github.com/amobe/bowling-kata-event-sourcing/src/v0/entity/bowling"
+	"github.com/amobe/bowling-kata-event-sourcing/src/v0/event"
 )
 
 //go:generate mockgen -destination mocks/mock_bowling.go -package mocks -source bowling.go

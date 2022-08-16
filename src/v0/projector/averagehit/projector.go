@@ -1,8 +1,8 @@
 package averagehit
 
 import (
-	"github.com/amobe/bowling-kata-event-sourcing/src/entity/bowling"
-	"github.com/amobe/bowling-kata-event-sourcing/src/event"
+	"github.com/amobe/bowling-kata-event-sourcing/src/v0/entity/bowling"
+	event2 "github.com/amobe/bowling-kata-event-sourcing/src/v0/event"
 )
 
 type projector struct {
@@ -14,10 +14,10 @@ func NewPojector() *projector {
 	return &projector{}
 }
 
-func (p *projector) Project(ev event.Event) {
+func (p *projector) Project(ev event2.Event) {
 	switch ev.Data().(type) {
-	case *event.GameReplacedEvent:
-		data := ev.Data().(*event.GameReplacedEvent)
+	case *event2.GameReplacedEvent:
+		data := ev.Data().(*event2.GameReplacedEvent)
 		hit := bowling.StandardPins - data.Game.Left
 
 		p.count++

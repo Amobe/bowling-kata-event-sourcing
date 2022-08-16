@@ -1,7 +1,7 @@
 package event
 
 import (
-	"github.com/amobe/bowling-kata-event-sourcing/src/valueobject"
+	"github.com/amobe/bowling-kata-event-sourcing/src/v0/valueobject"
 )
 
 type GameReplacedEvent struct {

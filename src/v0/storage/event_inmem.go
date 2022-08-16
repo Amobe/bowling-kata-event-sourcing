@@ -3,7 +3,7 @@ package storage
 import (
 	"fmt"
 
-	"github.com/amobe/bowling-kata-event-sourcing/src/event"
+	"github.com/amobe/bowling-kata-event-sourcing/src/v0/event"
 )
 
 type storage struct {

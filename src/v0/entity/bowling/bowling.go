@@ -1,8 +1,8 @@
 package bowling
 
 import (
-	"github.com/amobe/bowling-kata-event-sourcing/src/event"
-	"github.com/amobe/bowling-kata-event-sourcing/src/valueobject"
+	event2 "github.com/amobe/bowling-kata-event-sourcing/src/v0/event"
+	"github.com/amobe/bowling-kata-event-sourcing/src/v0/valueobject"
 )
 
 const (
@@ -31,7 +31,7 @@ func NewBowling(id string) *Bowling {
 	return b
 }
 
-func (b *Bowling) Throw(hit uint32) (evs []event.Event) {
+func (b *Bowling) Throw(hit uint32) (evs []event2.Event) {
 	currentGame, ok := b.Games[b.FrameNumber]
 	if !ok {
 		currentGame = createNewGame(b.FrameNumber)
@@ -51,7 +51,7 @@ func (b *Bowling) Throw(hit uint32) (evs []event.Event) {
 		return
 	}
 	evs = append(evs,
-		b.raise(event.NewThrownEvent(valueobject.Thrown, calculateScore(b.Games))))
+		b.raise(event2.NewThrownEvent(valueobject.Thrown, calculateScore(b.Games))))
 
 	if NoMoreHit(b.Games[b.FrameNumber]) || b.FrameNumber > 10 {
 		evs = append(evs, b.raise(b.Reload()))
@@ -59,14 +59,14 @@ func (b *Bowling) Throw(hit uint32) (evs []event.Event) {
 	return
 }
 
-func (b *Bowling) Reload() event.Event {
+func (b *Bowling) Reload() event2.Event {
 	status := valueobject.FrameFinished
 	frameNumber := b.FrameNumber
 	if hasExtraFrame(b.FrameNumber, b.Games[b.FrameNumber]) {
 		status = b.Status
 		frameNumber = b.FrameNumber + 1
 	}
-	return event.NewReloadedEvent(status, frameNumber)
+	return event2.NewReloadedEvent(status, frameNumber)
 }
 
 func hasExtraFrame(frameNumber uint32, game valueobject.BowlingGame) bool {
@@ -75,20 +75,20 @@ func hasExtraFrame(frameNumber uint32, game valueobject.BowlingGame) bool {
 	return !(openEnd || strikeTwice)
 }
 
-func (b *Bowling) raise(ev event.Event) event.Event {
+func (b *Bowling) raise(ev event2.Event) event2.Event {
 	on(ev, b)
 	b.version++
 	return ev
 }
 
-func calculateGameHit(hit uint32, game valueobject.BowlingGame) event.Event {
+func calculateGameHit(hit uint32, game valueobject.BowlingGame) event2.Event {
 	hitGame := gameHit(game, hit)
-	return event.NewGameReplacedEvent(hitGame.FrameNumber, hitGame)
+	return event2.NewGameReplacedEvent(hitGame.FrameNumber, hitGame)
 }
 
-func calculateGameBonus(hit uint32, game valueobject.BowlingGame) event.Event {
+func calculateGameBonus(hit uint32, game valueobject.BowlingGame) event2.Event {
 	bonusedGame := bonus(game, hit)
-	return event.NewGameBonusedEvent(
+	return event2.NewGameBonusedEvent(
 		bonusedGame.FrameNumber, bonusedGame.Score, bonusedGame.ExtraBonus)
 }
 

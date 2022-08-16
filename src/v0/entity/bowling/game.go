@@ -1,6 +1,8 @@
 package bowling
 
-import "github.com/amobe/bowling-kata-event-sourcing/src/valueobject"
+import (
+	"github.com/amobe/bowling-kata-event-sourcing/src/v0/valueobject"
+)
 
 const StandardPins = standardPins
 const standardPins = 10

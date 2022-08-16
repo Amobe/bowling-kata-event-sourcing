@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/amobe/bowling-kata-event-sourcing/src/handler"
-	"github.com/amobe/bowling-kata-event-sourcing/src/service"
-	"github.com/amobe/bowling-kata-event-sourcing/src/storage"
+	handler2 "github.com/amobe/bowling-kata-event-sourcing/src/v0/handler"
+	"github.com/amobe/bowling-kata-event-sourcing/src/v0/service"
+	"github.com/amobe/bowling-kata-event-sourcing/src/v0/storage"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,12 +15,12 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	bh, err := handler.NewBowlingHandler(bs)
+	bh, err := handler2.NewBowlingHandler(bs)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	g := gin.Default()
-	g.POST("/roll", handler.GetGinHandler(bh))
+	g.POST("/roll", handler2.GetGinHandler(bh))
 	log.Fatal(g.Run(":80"))
 }
