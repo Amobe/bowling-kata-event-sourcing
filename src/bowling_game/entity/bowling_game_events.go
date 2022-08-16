@@ -19,7 +19,7 @@ type BowlingGameCreated struct {
 func NewBowlingGameCreated(gameID string) BowlingGameCreated {
 	return BowlingGameCreated{
 		BowlingGameEvents: BowlingGameEvents{
-			name: "NewBowlingGameCreated",
+			name: "BowlingGameCreated",
 		},
 		gameID: gameID,
 	}
