@@ -11,17 +11,18 @@ import (
 
 type inMemBowlingGameRepository struct {
 	eventBus usecase.DomainEventBus
-	store    []*entity.BowlingGame
+	store    map[string]*entity.BowlingGame
 }
 
 func NewInMemBowlingGameRepository(eventBus usecase.DomainEventBus) out.BowlingGameRepository {
 	return &inMemBowlingGameRepository{
 		eventBus: eventBus,
+		store:    map[string]*entity.BowlingGame{},
 	}
 }
 
 func (r *inMemBowlingGameRepository) Save(ctx context.Context, bowlingGame *entity.BowlingGame) error {
-	r.store = append(r.store, bowlingGame)
+	r.store[bowlingGame.GameID()] = bowlingGame
 	if err := r.eventBus.PostAll(ctx, bowlingGame.AggregateRoot); err != nil {
 		return fmt.Errorf("event bus post all bowling game: %w", err)
 	}
@@ -29,10 +30,9 @@ func (r *inMemBowlingGameRepository) Save(ctx context.Context, bowlingGame *enti
 }
 
 func (r *inMemBowlingGameRepository) FindByID(ctx context.Context, gameID string) (*entity.BowlingGame, error) {
-	for _, g := range r.store {
-		if gameID == g.GameID() {
-			return g, nil
-		}
+	g, ok := r.store[gameID]
+	if !ok {
+		return nil, fmt.Errorf("not found")
 	}
-	return nil, fmt.Errorf("not found")
+	return g, nil
 }
